@@ -1,4 +1,4 @@
-library(tidyverse) ; library(httr) ; library(readxl) ; library(janitor)
+library(tidyverse) ; library(httr) ; library(readxl) ; library(janitor) ; library(lubridate)
 
 # -------------------------------------------
 # Lower Tier Local Authorities
@@ -46,14 +46,16 @@ GET(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fhea
 
 read_xlsx(tmp, sheet = 4, skip = 3) %>% 
   clean_names() %>% 
-  select(-geography_type) %>% 
   pivot_wider(names_from = cause_of_death, values_from = number_of_deaths) %>% 
-  mutate(date = ymd("2019-12-27") + weeks(week_number),
-         `Other causes` = `All causes`-`COVID 19`) %>% 
-  select(-`All causes`) %>% 
   rename(`COVID-19` = `COVID 19`) %>% 
+  mutate(area_code = case_when(as.character(area_code) %in% c("E06000052", "E06000053") ~ "E06000052", TRUE ~ area_code),
+         area_name = case_when(area_code == "E06000052" ~ "Cornwall and Isles of Scilly", TRUE ~ area_name),
+         date = ymd("2019-12-27") + weeks(week_number),
+         `Other causes` = `All causes`-`COVID-19`) %>% 
+  group_by(area_code, area_name, date, week_number, place_of_death) %>% 
+  summarise(`COVID-19` = sum(`COVID-19`),
+            `Other causes` = sum(`Other causes`)) %>% 
   pivot_longer(-c(area_code, area_name, week_number, date, place_of_death), names_to = "cause_of_death", values_to = "number_of_deaths") %>% 
-  select(area_code, area_name, date, week_number, cause_of_death, place_of_death, number_of_deaths) %>% 
   write_csv("deaths.csv")
 
 
