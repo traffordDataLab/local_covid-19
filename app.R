@@ -11,6 +11,7 @@ source("global.R")
 # set Sass variables
 bs_theme_new(version = "4+3", bootswatch = NULL)
 bs_theme_add_variables(
+  "primary" = "#969696",
   "secondary" = "#bdbdbd",
   "body-color" = "#212121",
   "input-border-color" = "#202528",
