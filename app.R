@@ -11,7 +11,6 @@ source("global.R")
 # set Sass variables
 bs_theme_new(version = "4+3", bootswatch = NULL)
 bs_theme_add_variables(
-  "primary" = "#969696",
   "secondary" = "#bdbdbd",
   "body-color" = "#212121",
   "input-border-color" = "#202528",
@@ -36,7 +35,7 @@ ui <- bootstrapPage(
           style = "position: relative; top: -3px; margin-left:10px; padding-top:10px; padding-right:10px;",
           height = 40
         ),
-        href = "https://www.trafford.gov.uk",
+        href = "https://www.trafforddatalab.io",
         target = "_blank"
       )),
     windowTitle = "Local COVID-19"
