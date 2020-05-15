@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+
+@font-face {
+  font-family: 'Open Sans', sans-serif;
+}
+
+div {
+  font-family: 'Open Sans', sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6, .header {
+  font-family: 'Open Sans', sans-serif;
+  color: #212121;
+}
+
+/* Hide underline on logo on hover */
+.headerContainer a:hover {
+  text-decoration: none;
+}
+
+/* Centre tabsetPanel pills */
+.nav-pills {
+  display: flex;
+  justify-content: center;
+}
+
+/* Centre fluidRow content */
+.row {
+  display: flex;
+  justify-content: center;
+}
