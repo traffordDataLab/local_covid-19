@@ -97,7 +97,7 @@ read_xlsx(tmp, sheet = 4) %>%
 # URL: https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard
 
 tmp <- tempfile(fileext = ".xlsx")
-GET(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fhealthandsocialcare%2fcausesofdeath%2fdatasets%2fdeathregistrationsandoccurrencesbylocalauthorityandhealthboard%2f2020/lahbtablesweek18.xlsx",
+GET(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fhealthandsocialcare%2fcausesofdeath%2fdatasets%2fdeathregistrationsandoccurrencesbylocalauthorityandhealthboard%2f2020/lahbtablesweek19.xlsx",
     write_disk(tmp))
 
 read_xlsx(tmp, sheet = 4, skip = 3) %>% 
