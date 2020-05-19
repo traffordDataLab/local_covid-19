@@ -76,9 +76,19 @@ ui <- bootstrapPage(
                          br(),
                          uiOutput("care_home_deaths_ui"),
                          br(),
-                         girafeOutput("care_home_deaths_plot", width = "100%")
-                       )))
-  ))
+                         girafeOutput("care_home_deaths_plot", width = "100%"),
+                       ))),
+              tabPanel("Clinical vulnerabilities",
+                       fluidRow(
+                         div(class = "col-sm-8",
+                             br(),
+                             uiOutput("clinical_vulnerabilities_widget"))),
+                       fluidRow(
+                           div(class = "col-sm-8",
+                             uiOutput("clinical_vulnerabilities_ui"),
+                             br(),br(),
+                             girafeOutput("clinical_vulnerabilities_plot", width = "100%")
+                         )))))
 
 shinyApp(ui, function(input,output){
   
@@ -311,5 +321,86 @@ shinyApp(ui, function(input,output){
      care_home_deaths_selection() %>% select(-tooltip),
      file, row.names = FALSE)}
  )
-  
+ 
+ # -------------------------------------------
+ # Clinical vulnerabilties
+ # -------------------------------------------
+
+ output$clinical_vulnerabilities_widget <- renderUI({
+   req(input$ltla)
+   div(class = "container-fluid",
+       fluidRow(
+            radioButtons(inputId = "condition",
+                     label = NULL,
+                     choices = c("Asthma","COPD","Chronic Kidney Disease", 
+                                   "Coronary Heart Disease","Diabetes","High Blood Pressure","Obesity"),
+                     inline = TRUE)
+       ))
+ })
+ 
+ clinical_vulnerabilities_selection <- reactive(
+   filter(msoa, area_name == input$ltla) %>% 
+     left_join(clinical_vulnerabilities, by = "msoa11cd") %>% 
+     select(msoa11hclnm, percent = input$condition) %>% 
+     mutate(msoa11hclnm = str_remove_all(msoa11hclnm, "'"),
+            tooltip =  paste0("<strong>", percent(percent, accuracy = 0.1), "</strong><br/>", "<em>", msoa11hclnm, "</em>"))
+ )
+ 
+ clinical_vulnerabilities_plot <- reactive(
+   
+   ggplot(clinical_vulnerabilities_selection()) + 
+     geom_sf_interactive(aes(fill = percent, tooltip = tooltip, data_id = msoa11hclnm)) +
+     geom_sf(fill = NA, color = "#FFFFFF", size = 0.2) +
+     scale_fill_viridis_c(direction = -1, name = "Neighbourhood\nprevalence", labels = percent_format(accuracy = 0.1)) +
+     labs(x = NULL, y = NULL,
+          title = input$condition,
+          subtitle = paste0(input$ltla, ", 2017/18"),
+          caption = "Source: NHS Digital | House of Commons Library\nContains Ordnance Survey data © Crown copyright and database right 2020") +
+     coord_sf(crs = st_crs(4326), datum = NA) +
+     theme_void() +
+     theme(plot.margin = unit(rep(0.5, 4), "cm"),
+           plot.title.position = "plot",
+           plot.title = element_text(size = 14, face = "bold"),
+           plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
+           plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10)),
+           legend.position = "right")
+ )
+ 
+ output$clinical_vulnerabilities_plot <- renderGirafe({
+   req(input$ltla, input$condition)
+   gg <- clinical_vulnerabilities_plot()
+   girafe(ggobj = gg, width_svg = 7,  
+          options = list(
+            opts_sizing(rescale = FALSE),
+            opts_tooltip(use_fill = TRUE), 
+            opts_hover("cursor:pointer;stroke:#FFFFFF;stroke-width:2px;"), 
+            opts_selection(type = "none"),        
+            opts_toolbar(saveaspng = FALSE)))
+ })
+ 
+ output$clinical_vulnerabilities_ui <- renderUI({
+   req(input$ltla, input$condition)
+   div(
+     div(style = "position: absolute; right: 8.5em; top: 0em;",
+         dropdown(includeMarkdown("data/metadata/clinical_vulnerabilities.md"), icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
+     div(style = "position: absolute; right: 5em; top: 0em;",
+         dropdown(download_button("download_clinical_vulnerabilities_plot", label = "Download plot"), icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
+     div(style = "position: absolute; right: 1.5em; top: 0em;",
+         dropdown(download_button("download_clinical_vulnerabilities_data", label = "Get the data"), icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
+         tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
+   )
+ })
+ 
+ output$download_clinical_vulnerabilities_plot <- downloadHandler(
+   filename = function() {"clinical_vulnerabilities.png"},
+   content = function(file) {ggsave(file, plot = clinical_vulnerabilities_plot(), width = 8, height = 6, dpi = 300, device = "png")}
+ )
+ 
+ output$download_clinical_vulnerabilities_data <- downloadHandler(
+   filename = function() {"clinical_vulnerabilities.csv"},
+   content = function(file) {write.csv(
+     clinical_vulnerabilities_selection() %>% select(-tooltip) %>% st_set_geometry(NULL),
+     file, row.names = FALSE)}
+ )
+ 
 })
