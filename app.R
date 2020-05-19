@@ -373,7 +373,7 @@ shinyApp(ui, function(input,output){
           options = list(
             opts_sizing(rescale = FALSE),
             opts_tooltip(use_fill = TRUE), 
-            opts_hover("cursor:pointer;stroke:#FFFFFF;stroke-width:2px;"), 
+            opts_hover("cursor:pointer;stroke:#000000;stroke-width:2.5px;"), 
             opts_selection(type = "none"),        
             opts_toolbar(saveaspng = FALSE)))
  })
