@@ -173,12 +173,12 @@ shinyApp(ui, function(input,output){
  })
   
  output$download_new_cases_plot <- downloadHandler(
-    filename = function() {"new_cases.png"},
+    filename = function() {paste0("new_cases_", input$ltla, ".png")},
     content = function(file) {ggsave(file, plot = new_cases_plot(), width = 8, height = 6, dpi = 300, device = "png")}
   )
  
  output$download_new_cases_data <- downloadHandler(
-   filename = function() {"new_cases.csv"},
+   filename = function() {paste0("new_cases_", input$ltla, ".csv")},
    content = function(file) {write.csv(
      new_cases_selection() %>% 
        select(-c(ma_cases, tooltip)) %>% 
@@ -243,12 +243,12 @@ shinyApp(ui, function(input,output){
  })
  
  output$download_hospital_deaths_plot <- downloadHandler(
-   filename = function() {"hospital_deaths.png"},
+   filename = function() {paste0("hospital_deaths_", input$ltla, ".png")},
    content = function(file) {ggsave(file, plot = hospital_deaths_plot(), width = 8, height = 6, dpi = 300, device = "png")}
  )
  
  output$download_hospital_deaths_data <- downloadHandler(
-   filename = function() {"hospital_deaths.csv"},
+   filename = function() {paste0("hospital_deaths_", input$ltla, ".csv")},
    content = function(file) {write.csv(
      hospital_deaths_selection() %>% select(-tooltip),
      file, row.names = FALSE)}
@@ -311,12 +311,12 @@ shinyApp(ui, function(input,output){
  })
  
  output$download_care_home_deaths_plot <- downloadHandler(
-   filename = function() {"care_home_deaths.png"},
+   filename = function() {paste0("care_home_deaths_", input$ltla, ".png")},
    content = function(file) {ggsave(file, plot = care_home_deaths_plot(), width = 8, height = 6, dpi = 300, device = "png")}
  )
  
  output$download_care_home_deaths_data <- downloadHandler(
-   filename = function() {"care_home_deaths.csv"},
+   filename = function() {paste0("care_home_deaths_", input$ltla, ".csv")},
    content = function(file) {write.csv(
      care_home_deaths_selection() %>% select(-tooltip),
      file, row.names = FALSE)}
@@ -341,8 +341,9 @@ shinyApp(ui, function(input,output){
  clinical_vulnerabilities_selection <- reactive(
    filter(msoa, area_name == input$ltla) %>% 
      left_join(clinical_vulnerabilities, by = "msoa11cd") %>% 
-     select(msoa11hclnm, percent = input$condition) %>% 
-     mutate(msoa11hclnm = str_remove_all(msoa11hclnm, "'"),
+     rename(percent = input$condition) %>% 
+     mutate(condition = as.character(input$condition),
+            msoa11hclnm = str_remove_all(msoa11hclnm, "'"),
             tooltip =  paste0("<strong>", percent(percent, accuracy = 0.1), "</strong><br/>", "<em>", msoa11hclnm, "</em>"))
  )
  
@@ -392,14 +393,16 @@ shinyApp(ui, function(input,output){
  })
  
  output$download_clinical_vulnerabilities_plot <- downloadHandler(
-   filename = function() {"clinical_vulnerabilities.png"},
+   filename = function() {paste0(input$condition, "_", input$ltla, ".png")},
    content = function(file) {ggsave(file, plot = clinical_vulnerabilities_plot(), width = 8, height = 6, dpi = 300, device = "png")}
  )
  
  output$download_clinical_vulnerabilities_data <- downloadHandler(
-   filename = function() {"clinical_vulnerabilities.csv"},
+   filename = function() {paste0(input$condition, "_", input$ltla, ".csv")},
    content = function(file) {write.csv(
-     clinical_vulnerabilities_selection() %>% select(-tooltip) %>% st_set_geometry(NULL),
+     clinical_vulnerabilities_selection() %>% 
+       select(msoa11cd,	msoa11nm,	msoa11hclnm, area_code,	area_name, condition, percent) %>% 
+       st_set_geometry(NULL),
      file, row.names = FALSE)}
  )
  
