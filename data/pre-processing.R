@@ -1,4 +1,4 @@
-library(tidyverse) ; library(httr) ; library(readxl) ; library(janitor) ; library(lubridate) ; library(sf)
+library(tidyverse) ; library(rvest) ; library(httr) ; library(readxl) ; library(janitor) ; library(lubridate) ; library(sf)
 
 # -------------------------------------------
 # MSOA
@@ -97,7 +97,14 @@ read_xlsx(tmp, sheet = 4) %>%
 # URL: https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard
 
 tmp <- tempfile(fileext = ".xlsx")
-GET(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fhealthandsocialcare%2fcausesofdeath%2fdatasets%2fdeathregistrationsandoccurrencesbylocalauthorityandhealthboard%2f2020/lahbtablesweek19.xlsx",
+
+ext <- read_html("https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard") %>% 
+  html_nodes("a") %>%
+  html_attr("href") %>%
+  str_subset("\\.xlsx") %>% 
+  .[[1]]
+
+GET(url = paste0("https://www.ons.gov.uk", ext),
     write_disk(tmp))
 
 read_xlsx(tmp, sheet = 4, skip = 3) %>% 
