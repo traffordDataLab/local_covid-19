@@ -363,7 +363,7 @@ shinyApp(ui, function(input,output){
            plot.title.position = "plot",
            plot.title = element_text(size = 14, face = "bold"),
            plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
-           plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10)),
+           plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10), hjust = 0),
            legend.position = "right")
  )
  
