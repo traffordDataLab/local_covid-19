@@ -27,14 +27,10 @@ ltla <- read_csv("data/ltla.csv")
 # Source: Public Health England
 # URL: https://coronavirus.data.gov.uk
 
-cases <- read_csv("https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv",
-                  col_types = cols(
-                    `Area name` = col_character(),
-                    `Area code` = col_character(),
-                    `Area type` = col_character(),
-                    `Specimen date` = col_date(format = "%Y-%m-%d"),
-                    `Daily lab-confirmed cases` = col_integer(),
-                    `Cumulative lab-confirmed cases` = col_integer())) %>% 
+phe <- read_csv("https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv") %>% 
+  mutate(`Specimen date` = as.Date(`Specimen date`, format = "%Y-%m-%d")) 
+
+cases <- phe %>% 
   filter(`Area type` == "Lower tier local authority") %>%
   select(date = `Specimen date`,
          area_code = `Area code`,

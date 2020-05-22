@@ -104,13 +104,17 @@ shinyApp(ui, function(input,output){
     resident_population <- pull(filter(ltla, area_name == input$ltla),population)
     infection_rate <- cumulative_cases/resident_population*100000
     
+    england_cumulative_cases <- pull(filter(phe, `Area name` == "England", `Specimen date` == max(`Specimen date`)),`Cumulative lab-confirmed cases`)
+    england_resident_population <- sum(ltla$population, na.rm = TRUE)
+    england_infection_rate <- england_cumulative_cases/england_resident_population*100000
+    
     latest_date_deaths <- max(deaths$date)
     covid19_deaths <- filter(deaths, area_name == input$ltla, cause_of_death == "COVID-19") %>% 
       summarise(number_of_deaths = sum(number_of_deaths, na.rm = TRUE)) %>% pull()
     
     
     HTML(paste0("<br/><p>As of ", format(latest_date_cases, '%A %d %B %Y'), ", the total number of confirmed cases of COVID-19 in <strong>", input$ltla, "</strong> was <strong>", 
-         comma(cumulative_cases), "</strong>, a rate of <strong> ", round(infection_rate,1), "</strong> cases per 100,000 people.</p>
+         comma(cumulative_cases), "</strong>, a rate of <strong> ", round(infection_rate,1), "</strong> cases per 100,000 people. The infection rate in England is <strong>", round(england_infection_rate,1), "</strong> for every 100,000.</p>
          <p>There have been a total of <strong>", covid19_deaths, "</strong> coronavirus-related deaths registered in ", input$ltla, " up to the week ending ", format(latest_date_deaths, '%d %B %Y'), ". </p>")) 
   })
   
