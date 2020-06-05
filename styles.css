@@ -33,3 +33,20 @@ h1, h2, h3, h4, h5, h6, .header {
   display: flex;
   justify-content: center;
 }
+
+/* Table */
+.table-container {
+  margin: 0 auto;
+  width: 600px;
+  font-family: sans-serif;
+}
+
+.text-highlight {
+  font-weight: bold;
+  color: #39809E;
+}
+
+/* Error message*/
+.shiny-output-error-validation {
+  font-weight: bold;
+}

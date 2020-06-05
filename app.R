@@ -1,10 +1,13 @@
 library(shiny) 
 library(bootstraplib) 
 library(tidyverse) 
+library(fingertipsR)
 library(zoo) 
 library(scales) 
 library(shinyWidgets)
 library(ggiraph)
+library(reactable)
+library(shinycssloaders)
 
 source("global.R")
 
@@ -61,6 +64,17 @@ ui <- bootstrapPage(
                              uiOutput("new_cases_ui"),
                              br(),
                              girafeOutput("new_cases_plot", width = "100%"),
+                         ))),
+              tabPanel("Total cases",
+                       fluidRow(
+                         div(class = "col-sm-8",
+                             br(),
+                             uiOutput("total_cases_ui"),
+                             br(),
+                             uiOutput("total_cases_table_title"),
+                             br(),
+                             reactableOutput("total_cases_table", height = "100%"),
+                             br()
                          ))),
               tabPanel("Hospital deaths",
                        fluidRow(
@@ -189,6 +203,88 @@ shinyApp(ui, function(input,output){
        arrange(desc(date)),
             file, row.names = FALSE)}
    )
+ 
+ # -------------------------------------------
+ # Total cases
+ # -------------------------------------------
+ 
+ cipfa <- reactive({
+   req(input$ltla)
+   tryCatch(c(nearest_neighbours(AreaCode = pull(filter(ltla, area_name == input$ltla), area_code), 
+                                        AreaTypeID = 101, 
+                                        measure = "CIPFA"), 
+                     pull(filter(ltla, area_name == input$ltla), area_code)),
+            error = function(cond) { return(NULL) },
+            warning = function(cond) { return(NULL) },
+            finally = NA)
+ })
+ 
+ total_cases_selection <- reactive(
+   filter(cases, area_code %in% cipfa(), date == max(date)) %>% 
+     select(area_name, cum_cases, cum_rate)
+ )
+ 
+ output$total_cases_table <- renderReactable({
+   req(input$ltla)
+   
+   validate(
+     need(try(!is.null(cipfa())), "Please refer to the summary page for the total number of cases")
+   )
+   
+   reactable(class = "table-container",
+             total_cases_selection(),
+             compact = TRUE,
+             pagination = FALSE,
+             wrap = FALSE,
+             defaultColDef = colDef(headerClass = "header", align = "left"),
+             defaultSorted = "cum_rate",
+             defaultSortOrder = "desc",
+             rowClass = function(index) {
+               if (total_cases_selection()[index, "area_name"] == input$ltla) {
+                 "text-highlight"
+               }  },
+             columns = list(
+               area_name = colDef(name = "Local Authority"),
+               cum_cases = colDef(name = "Total cases",
+                                  format = colFormat(separators = TRUE),
+                                  align = "left"),
+               cum_rate = colDef(name = "Rate per 100,000 people",
+                                 align = "left")
+               )
+             )
+ })
+ 
+ output$total_cases_ui <- renderUI({
+   req(input$ltla, !is.null(cipfa()))
+   
+   div(
+     div(style = "position: absolute; right: 8.5em; top: 0em;",
+         dropdown(includeMarkdown("data/metadata/total_cases.md"), icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
+     div(style = "position: absolute; right: 5em; top: 0em;",
+         dropdown(download_button("download_total_cases_data", label = "Get the data"), icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
+         tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
+   )
+   
+ })
+ 
+ output$total_cases_table_title <- renderUI({
+   req(input$ltla, !is.null(cipfa()))
+   
+  div(style = "text-align: center; margin: 8px 0; font-size: 16px;",
+       div(style = "font-size: 16px; font-weight: 600;", 
+           paste("Cumulative confirmed cases,", format(max(cases$date), '%d %B %Y'))),
+       paste(input$ltla , "compared with similar local authorities")
+   )
+  
+ })
+ 
+ output$download_total_cases_data <- downloadHandler(
+   filename = function() {paste0("total_cases_", input$ltla, ".csv")},
+   content = function(file) {write.csv(
+     total_cases_selection() %>% 
+       arrange(desc(area_name)),
+     file, row.names = FALSE)}
+ )
  
  # -------------------------------------------
  # Hospital deaths

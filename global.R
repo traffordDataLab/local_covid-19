@@ -42,7 +42,10 @@ cases <- phe %>%
   mutate(new_cases = replace_na(new_cases, 0),
          cum_cases = cumsum(new_cases)) %>% 
   ungroup() %>% 
-  fill(area_name)
+  fill(area_name) %>% 
+  left_join(select(ltla, -area_name), by = "area_code") %>% 
+  mutate(cum_rate = round(cum_cases/population*100000,1)) %>% 
+  select(-population)
 
 # -------------------------------------------
 # Registered deaths
