@@ -7,7 +7,6 @@ library(scales)
 library(shinyWidgets)
 library(ggiraph)
 library(reactable)
-library(shinycssloaders)
 
 source("global.R")
 
@@ -91,18 +90,8 @@ ui <- bootstrapPage(
                          uiOutput("care_home_deaths_ui"),
                          br(),
                          girafeOutput("care_home_deaths_plot", width = "100%"),
-                       ))),
-              tabPanel("Clinical vulnerabilities",
-                       fluidRow(
-                         div(class = "col-sm-8",
-                             br(),
-                             uiOutput("clinical_vulnerabilities_widget"))),
-                       fluidRow(
-                           div(class = "col-sm-8",
-                             uiOutput("clinical_vulnerabilities_ui"),
-                             br(),br(),
-                             girafeOutput("clinical_vulnerabilities_plot", width = "100%")
-                         )))))
+                       )))
+              ))
 
 shinyApp(ui, function(input,output){
   
@@ -127,9 +116,9 @@ shinyApp(ui, function(input,output){
       summarise(number_of_deaths = sum(number_of_deaths, na.rm = TRUE)) %>% pull()
     
     
-    HTML(paste0("<br/><p>As of ", format(latest_date_cases, '%A %d %B %Y'), ", the total number of confirmed cases of COVID-19 in <strong>", input$ltla, "</strong> was <strong>", 
+    HTML(paste0("<br/><p>As of <strong>", format(latest_date_cases, '%A %d %B %Y'), "</strong>, the total number of confirmed cases of COVID-19 in <strong>", input$ltla, "</strong> was <strong>", 
          comma(cumulative_cases), "</strong>, a rate of <strong> ", round(infection_rate,1), "</strong> cases per 100,000 people. The infection rate in England is <strong>", round(england_infection_rate,1), "</strong> for every 100,000.</p>
-         <p>There have been a total of <strong>", covid19_deaths, "</strong> coronavirus-related deaths registered in ", input$ltla, " up to the week ending ", format(latest_date_deaths, '%d %B %Y'), ". </p>")) 
+         <p>There have been a total of <strong>", covid19_deaths, "</strong> coronavirus-related deaths registered in <strong>", input$ltla, "</strong> up to the week ending <strong>", format(latest_date_deaths, '%d %B %Y'), "</strong>. </p>")) 
   })
   
   # -------------------------------------------
@@ -240,18 +229,18 @@ shinyApp(ui, function(input,output){
              defaultSorted = "cum_rate",
              defaultSortOrder = "desc",
              rowClass = function(index) {
-               if (total_cases_selection()[index, "area_name"] == input$ltla) {
-                 "text-highlight"
-               }  },
+                if (total_cases_selection()[index, "area_name"] == input$ltla) {
+                   "text-highlight"
+                   }},
              columns = list(
-               area_name = colDef(name = "Local Authority"),
-               cum_cases = colDef(name = "Total cases",
-                                  format = colFormat(separators = TRUE),
-                                  align = "left"),
-               cum_rate = colDef(name = "Rate per 100,000 people",
-                                 align = "left")
-               )
-             )
+                area_name = colDef(name = "Local Authority"),
+                cum_cases = colDef(name = "Total cases",
+                                   format = colFormat(separators = TRUE),
+                                   align = "left"),
+                cum_rate = colDef(name = "Rate per 100,000 people",
+                                  align = "left")
+                )
+      )
  })
  
  output$total_cases_ui <- renderUI({
@@ -282,7 +271,9 @@ shinyApp(ui, function(input,output){
    filename = function() {paste0("total_cases_", input$ltla, ".csv")},
    content = function(file) {write.csv(
      total_cases_selection() %>% 
-       arrange(desc(area_name)),
+       rename(`Local authority` = area_name,
+              `Total cases` = cum_cases,
+              `Rate per 100,000 people` = cum_rate),
      file, row.names = FALSE)}
  )
  
@@ -419,90 +410,6 @@ shinyApp(ui, function(input,output){
    filename = function() {paste0("care_home_deaths_", input$ltla, ".csv")},
    content = function(file) {write.csv(
      care_home_deaths_selection() %>% select(-tooltip),
-     file, row.names = FALSE)}
- )
- 
- # -------------------------------------------
- # Clinical vulnerabilties
- # -------------------------------------------
-
- output$clinical_vulnerabilities_widget <- renderUI({
-   req(input$ltla)
-   div(class = "container-fluid",
-       fluidRow(
-            radioButtons(inputId = "condition",
-                     label = NULL,
-                     choices = c("Asthma","COPD","Chronic Kidney Disease", 
-                                   "Coronary Heart Disease","Diabetes","High Blood Pressure","Obesity"),
-                     inline = TRUE)
-       ))
- })
- 
- clinical_vulnerabilities_selection <- reactive(
-   filter(msoa, area_name == input$ltla) %>% 
-     left_join(clinical_vulnerabilities, by = "msoa11cd") %>% 
-     rename(percent = input$condition) %>% 
-     mutate(condition = as.character(input$condition),
-            msoa11hclnm = str_remove_all(msoa11hclnm, "'"),
-            tooltip =  paste0("<strong>", percent(percent, accuracy = 0.1), "</strong><br/>", "<em>", msoa11hclnm, "</em>"))
- )
- 
- clinical_vulnerabilities_plot <- reactive(
-   
-   ggplot(clinical_vulnerabilities_selection()) + 
-     geom_sf_interactive(aes(fill = percent, tooltip = tooltip, data_id = msoa11hclnm)) +
-     geom_sf(fill = NA, color = "#FFFFFF", size = 0.2) +
-     scale_fill_viridis_c(direction = -1, name = "Neighbourhood\nprevalence", labels = percent_format(accuracy = 0.1)) +
-     labs(x = NULL, y = NULL,
-          title = input$condition,
-          subtitle = paste0(input$ltla, ", 2017/18"),
-          caption = "Source: NHS Digital | House of Commons Library\nContains Ordnance Survey data © Crown copyright and database right 2020") +
-     coord_sf(crs = st_crs(4326), datum = NA) +
-     theme_void() +
-     theme(plot.margin = unit(rep(0.5, 4), "cm"),
-           plot.title.position = "plot",
-           plot.title = element_text(size = 14, face = "bold"),
-           plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
-           plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10), hjust = 0),
-           legend.position = "right")
- )
- 
- output$clinical_vulnerabilities_plot <- renderGirafe({
-   req(input$ltla, input$condition)
-   gg <- clinical_vulnerabilities_plot()
-   girafe(ggobj = gg, width_svg = 7,  
-          options = list(
-            opts_sizing(rescale = FALSE),
-            opts_tooltip(use_fill = TRUE), 
-            opts_hover("cursor:pointer;stroke:#000000;stroke-width:2.5px;"), 
-            opts_selection(type = "none"),        
-            opts_toolbar(saveaspng = FALSE)))
- })
- 
- output$clinical_vulnerabilities_ui <- renderUI({
-   req(input$ltla, input$condition)
-   div(
-     div(style = "position: absolute; right: 8.5em; top: 0em;",
-         dropdown(includeMarkdown("data/metadata/clinical_vulnerabilities.md"), icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
-     div(style = "position: absolute; right: 5em; top: 0em;",
-         dropdown(download_button("download_clinical_vulnerabilities_plot", label = "Download plot"), icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
-     div(style = "position: absolute; right: 1.5em; top: 0em;",
-         dropdown(download_button("download_clinical_vulnerabilities_data", label = "Get the data"), icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
-         tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
-   )
- })
- 
- output$download_clinical_vulnerabilities_plot <- downloadHandler(
-   filename = function() {paste0(input$condition, "_", input$ltla, ".png")},
-   content = function(file) {ggsave(file, plot = clinical_vulnerabilities_plot(), width = 8, height = 6, dpi = 300, device = "png")}
- )
- 
- output$download_clinical_vulnerabilities_data <- downloadHandler(
-   filename = function() {paste0(input$condition, "_", input$ltla, ".csv")},
-   content = function(file) {write.csv(
-     clinical_vulnerabilities_selection() %>% 
-       select(msoa11cd,	msoa11nm,	msoa11hclnm, area_code,	area_name, condition, percent) %>% 
-       st_set_geometry(NULL),
      file, row.names = FALSE)}
  )
  

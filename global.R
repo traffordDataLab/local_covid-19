@@ -1,14 +1,4 @@
-library(tidyverse) ; library(sf)
-
-# -------------------------------------------
-# MSOA
-# -------------------------------------------
-
-# Source: ONS Open Geography Portal and Nomis
-# URL: https://geoportal.statistics.gov.uk
-# URL: https://www.nomisweb.co.uk/datasets/pestsyoala
-
-msoa <- st_read("data/msoa.geojson")
+library(tidyverse)
 
 # -------------------------------------------
 # Lower Tier Local Authorities
@@ -55,13 +45,3 @@ cases <- phe %>%
 # URL: https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard
 
 deaths <- read_csv("data/deaths.csv")
-
-# -------------------------------------------
-# Clinical vulnerabilities
-# -------------------------------------------
-
-# Source: NHS Digital ; House of Commons Library
-# URL: https://commonslibrary.parliament.uk/social-policy/health/constituency-data-how-healthy-is-your-area/
-
-clinical_vulnerabilities <- read_csv("data/clinical_vulnerabilities.csv")
-
