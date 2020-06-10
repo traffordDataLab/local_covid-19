@@ -7,6 +7,7 @@ library(scales)
 library(shinyWidgets)
 library(ggiraph)
 library(reactable)
+library(lubridate)
 
 source("global.R")
 
