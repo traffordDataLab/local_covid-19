@@ -35,13 +35,19 @@ h1, h2, h3, h4, h5, h6, .header {
 }
 
 /* Table */
-.table-container {
+.table {
   margin: 0 auto;
   width: 600px;
   font-family: sans-serif;
+  font-size: 13px;
+  line-height: 16px;
 }
 
-.text-highlight {
+.header .group-header {
+  font-size: 14px;
+}
+
+.value-highlight {
   font-weight: bold;
   color: #39809E;
 }

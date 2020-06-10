@@ -209,8 +209,13 @@ shinyApp(ui, function(input,output){
  })
  
  total_cases_selection <- reactive(
-   filter(cases, area_code %in% cipfa(), date == max(date)) %>% 
-     select(area_name, cum_cases, cum_rate)
+   filter(cases, area_code %in% cipfa(), date >= max(date) - days(7)) %>% 
+     group_by(area_name) %>% 
+     summarise(cum_cases = max(cum_cases),
+               cum_rate = max(cum_rate),
+               recent_cases = sum(new_cases),
+               recent_rate = round(recent_cases/population*100000,1)) %>% 
+     distinct(area_name, .keep_all = TRUE)
  )
  
  output$total_cases_table <- renderReactable({
@@ -220,26 +225,45 @@ shinyApp(ui, function(input,output){
      need(try(!is.null(cipfa())), "Please refer to the summary page for the total number of cases")
    )
    
-   reactable(class = "table-container",
+   with_tooltip <- function(value, tooltip) {
+     span(style = "text-decoration: underline; text-decoration-style: dotted;", title = tooltip, value)
+   }
+   
+   sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
+                        borderRight = "1px solid #eee")
+   
+   reactable(class = "table",
              total_cases_selection(),
-             compact = TRUE,
+             height = 500,
              pagination = FALSE,
              wrap = FALSE,
+             defaultColGroup = colGroup(headerClass = "group-header", align = "left"),
              defaultColDef = colDef(headerClass = "header", align = "left"),
-             defaultSorted = "cum_rate",
+             defaultSorted = "recent_rate",
              defaultSortOrder = "desc",
-             rowClass = function(index) {
-                if (total_cases_selection()[index, "area_name"] == input$ltla) {
-                   "text-highlight"
-                   }},
+             rowClass = function(index) {if (total_cases_selection()[index, "area_name"] == input$ltla) {"value-highlight"}},
              columns = list(
-                area_name = colDef(name = "Local Authority"),
-                cum_cases = colDef(name = "Total cases",
-                                   format = colFormat(separators = TRUE),
-                                   align = "left"),
-                cum_rate = colDef(name = "Rate per 100,000 people",
-                                  align = "left")
-                )
+               area_name = colDef(name = "Local Authority", 
+                                  minWidth = 210,
+                                  style = sticky_style,
+                                  headerStyle = sticky_style),
+               cum_cases = colDef(name = "Cases",
+                                  format = colFormat(separators = TRUE),
+                                  align = "left"),
+               cum_rate = colDef(name = "Rate",
+                                 header = with_tooltip("Rate", "per 100,000 population"),
+                                 align = "left"),
+               recent_cases = colDef(name = "Cases",
+                                     format = colFormat(separators = TRUE),
+                                     align = "left"),
+               recent_rate = colDef(name = "Rate",
+                                    header = with_tooltip("Rate", "per 100,000 population"),
+                                    align = "left")
+             ),
+             columnGroups = list(
+               colGroup(name = "Total cases", columns = c("cum_cases", "cum_rate")),
+               colGroup(name = "Last 7 days", columns = c("recent_cases", "recent_rate"))
+             )
       )
  })
  
@@ -273,7 +297,9 @@ shinyApp(ui, function(input,output){
      total_cases_selection() %>% 
        rename(`Local authority` = area_name,
               `Total cases` = cum_cases,
-              `Rate per 100,000 people` = cum_rate),
+              `Rate` = cum_rate,
+              `Total cases - last 7 days` = recent_cases,
+              `Rate - last 7 days` = recent_rate),
      file, row.names = FALSE)}
  )
  
