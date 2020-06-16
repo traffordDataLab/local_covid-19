@@ -251,14 +251,12 @@ shinyApp(ui, function(input,output){
                cum_cases = colDef(name = "Cases",
                                   format = colFormat(separators = TRUE),
                                   align = "left"),
-               cum_rate = colDef(name = "Rate",
-                                 header = with_tooltip("Rate", "per 100,000 population"),
+               cum_rate = colDef(name = "Per 100,000",
                                  align = "left"),
                recent_cases = colDef(name = "Cases",
                                      format = colFormat(separators = TRUE),
                                      align = "left"),
-               recent_rate = colDef(name = "Rate",
-                                    header = with_tooltip("Rate", "per 100,000 population"),
+               recent_rate = colDef(name = "Per 100,000",
                                     align = "left")
              ),
              columnGroups = list(
