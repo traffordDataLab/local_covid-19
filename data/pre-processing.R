@@ -64,6 +64,3 @@ read_xlsx(tmp, sheet = 4, skip = 3) %>%
             `Other causes` = sum(`Other causes`)) %>% 
   pivot_longer(-c(area_code, area_name, week_number, date, place_of_death), names_to = "cause_of_death", values_to = "number_of_deaths") %>% 
   write_csv("deaths.csv")
-
-
-

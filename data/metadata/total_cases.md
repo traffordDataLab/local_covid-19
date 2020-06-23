@@ -1,4 +1,4 @@
-**Source**: <a href="https://coronavirus.data.gov.uk" target="_blank">Public Health England</a> ; <a href="https://www.cipfastats.net/resources/nearestneighbours" target="_blank">CIPFA</a>    
+**Source**: <a href="https://coronavirus.data.gov.uk" target="_blank">Public Health England</a> ; <a href="https://www.cipfastats.net/resources/nearestneighbours" target="_blank">CIPFA</a>   
 
 **Notes**:    
 1. The date of a confirmed case corresponds to the *specimen* date rather than the *reporting* date.         

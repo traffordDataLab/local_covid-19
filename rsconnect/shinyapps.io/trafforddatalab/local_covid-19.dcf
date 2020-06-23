@@ -5,9 +5,9 @@ account: trafforddatalab
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2305668
-bundleId: 3277743
+bundleId: 3306126
 url: https://trafforddatalab.shinyapps.io/local_covid-19/
-when: 1592320758.1015
+when: 1592913364.97035
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: LICENSE|README.md|screenshot.png
