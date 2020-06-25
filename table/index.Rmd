@@ -39,7 +39,7 @@ cases <- read_csv("https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cas
 ```{r table}
 df <- cases %>% 
   mutate(period = case_when(
-    date >= max(date)-days(11) & date <= max(date)-days(5) ~ "last_week",
+    date >= max(date)-days(11) & date <= max(date)-days(5) ~ "current_week",
     date >= max(date)-days(18) & date <= max(date)-days(12) ~ "previous_week"
   )) %>% 
   filter(!is.na(period)) %>% 
@@ -47,11 +47,11 @@ df <- cases %>%
   group_by(area_code, area_name, period) %>% 
   summarise(total_cases = sum(new_cases)) %>% 
   pivot_wider(names_from = period, values_from = total_cases) %>% 
-  select(area_code, area_name, previous_week, last_week) %>% 
+  select(area_code, area_name, previous_week, current_week) %>% 
   left_join(population, by = "area_code") %>% 
   mutate(previous_week_rate = round(previous_week/population*100000,1),
-         last_week_rate = round(last_week/population*100000,1),
-         change = last_week-previous_week,
+         current_week_rate = round(current_week/population*100000,1),
+         change = current_week-previous_week,
          percent_rate = round(change/population*100000,1)) %>% 
   left_join(
     cases %>% 
@@ -62,8 +62,8 @@ df <- cases %>%
       ungroup(), by = "area_code"
   ) %>% 
   ungroup() %>% 
-  select(area_name, new_cases, previous_week, last_week, change, previous_week_rate, 
-         last_week_rate, percent_rate)
+  select(area_name, new_cases, previous_week, current_week, change, previous_week_rate, 
+         current_week_rate, percent_rate)
 
 sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
                      borderRight = "1px solid #eee")
@@ -92,7 +92,7 @@ tbl <- reactable(df,
                                       sortable = FALSE),
                    previous_week = colDef(header = with_tooltip("Previous week", paste("week ending", format(max(cases$date)-days(12),'%A %d %B'))),
                                           align = "left"),
-                   last_week = colDef(header = with_tooltip("Last week", paste("week ending", format(max(cases$date)-days(5),'%A %d %B'))),
+                   current_week = colDef(header = with_tooltip("Current week", paste("week ending", format(max(cases$date)-days(5),'%A %d %B'))),
                                       align = "left"),
                    change = colDef(name = "Change",
                                    style = function(value) {
@@ -108,7 +108,7 @@ tbl <- reactable(df,
                                    align = "left"),
                    previous_week_rate = colDef(header = with_tooltip("Previous week", paste("week ending", format(max(cases$date)-days(12),'%A %d %B'))),
                                                align = "left"),
-                   last_week_rate = colDef(header = with_tooltip("Last week", paste("week ending", format(max(cases$date)-days(5),'%A %d %B'))),
+                   current_week_rate = colDef(header = with_tooltip("Current week", paste("week ending", format(max(cases$date)-days(5),'%A %d %B'))),
                                            align = "left"),
                    percent_rate = colDef(name = "Change",
                                          style = function(value) {
@@ -124,8 +124,8 @@ tbl <- reactable(df,
                                          align = "left")
                    ),
                  columnGroups = list(
-                   colGroup(header = "Cases", columns = c("previous_week", "last_week", "change")),
-                   colGroup(header = "Per 100,000", columns = c("previous_week_rate", "last_week_rate", "percent_rate"))
+                   colGroup(header = "Cases", columns = c("previous_week", "current_week", "change")),
+                   colGroup(header = "Per 100,000", columns = c("previous_week_rate", "current_week_rate", "percent_rate"))
                    )
                  )
 ```
