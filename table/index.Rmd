@@ -62,8 +62,8 @@ df <- cases %>%
       ungroup(), by = "area_code"
   ) %>% 
   ungroup() %>% 
-  select(area_name, new_cases, previous_week, previous_week_rate, 
-         last_week, last_week_rate, change, percent_rate)
+  select(area_name, new_cases, previous_week, last_week, change, previous_week_rate, 
+         last_week_rate, percent_rate)
 
 sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
                      borderRight = "1px solid #eee")
@@ -90,15 +90,11 @@ tbl <- reactable(df,
                    new_cases = colDef(name = "14-day trend", 
                                       cell = function(value, index) {sparkline(df$new_cases[[index]], type = "line", lineColor = "#387F9D", fillColor = "#AACBD7", lineWidth = 2, spotColor = '#387f9d', minSpotColor = '#387f9d', maxSpotColor = '#e00000', highlightSpotColor = '#000000', highlightLineColor = '#000000', spotRadius = 3)},
                                       sortable = FALSE),
-                   previous_week = colDef(name = "Cases",
+                   previous_week = colDef(header = with_tooltip("Previous week", paste("week ending", format(max(cases$date)-days(12),'%A %d %B'))),
                                           align = "left"),
-                   previous_week_rate = colDef(name = "per 100,000",
-                                               align = "left"),
-                   last_week = colDef(name = "Cases",
+                   last_week = colDef(header = with_tooltip("Last week", paste("week ending", format(max(cases$date)-days(5),'%A %d %B'))),
                                       align = "left"),
-                   last_week_rate = colDef(name = "per 100,000",
-                                           align = "left"),
-                   change = colDef(name = "Cases",
+                   change = colDef(name = "Change",
                                    style = function(value) {
                                      if (value > 0) {
                                        color <- "#e00000"
@@ -110,7 +106,11 @@ tbl <- reactable(df,
                                      list(color = color, fontWeight = "bold")
                                      },
                                    align = "left"),
-                   percent_rate = colDef(name = "per 100,000",
+                   previous_week_rate = colDef(header = with_tooltip("Previous week", paste("week ending", format(max(cases$date)-days(12),'%A %d %B'))),
+                                               align = "left"),
+                   last_week_rate = colDef(header = with_tooltip("Last week", paste("week ending", format(max(cases$date)-days(5),'%A %d %B'))),
+                                           align = "left"),
+                   percent_rate = colDef(name = "Change",
                                          style = function(value) {
                                      if (value > 0) {
                                        color <- "#e00000"
@@ -124,9 +124,8 @@ tbl <- reactable(df,
                                          align = "left")
                    ),
                  columnGroups = list(
-                   colGroup(header = with_tooltip("Previous week", paste("week ending", format(max(cases$date)-days(12),'%A %d %B'))), columns = c("previous_week", "previous_week_rate")),
-                   colGroup(header = with_tooltip("Last week", paste("week ending", format(max(cases$date)-days(5),'%A %d %B'))), columns = c("last_week", "last_week_rate")),
-                   colGroup(name = "Change", columns = c("change", "percent_rate"))
+                   colGroup(header = "Cases", columns = c("previous_week", "last_week", "change")),
+                   colGroup(header = "Per 100,000", columns = c("previous_week_rate", "last_week_rate", "percent_rate"))
                    )
                  )
 ```
