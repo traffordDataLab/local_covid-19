@@ -1,0 +1,176 @@
+---
+pagetitle: "track local COVID-19 cases"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(tidyverse) ; library(httr) ; library(readxl) ; library(lubridate) ; library(reactable) ; library(zoo) ; library(shiny) ; library(sparkline)
+
+# Mid-2018 population estimates
+# Source: Nomis / ONS
+# URL: https://www.nomisweb.co.uk/datasets/pestsyoala
+population <- read_csv("http://www.nomisweb.co.uk/api/v01/dataset/NM_2002_1.data.csv?geography=1820327937...1820328318&date=latest&gender=0&c_age=200&measures=20100&select=geography_code,obs_value") %>% 
+  rename(area_code = GEOGRAPHY_CODE, population = OBS_VALUE) %>% 
+  # combine population estimates for Cornwall and Isles of Scilly
+  mutate(area_code = case_when(as.character(area_code) %in% c("E06000052", "E06000053") ~ "E06000052", TRUE ~ area_code)) %>% 
+  group_by(area_code) %>% 
+  summarise(population = sum(population))
+
+# Confirmed cases
+# Source: Public Health England
+# URL: https://coronavirus.data.gov.uk
+cases <- read_csv("https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv") %>% 
+  filter(`Area type` == "Lower tier local authority") %>%
+  mutate(`Specimen date` = as.Date(`Specimen date`, format = "%Y-%m-%d")) %>% 
+  select(date = `Specimen date`,
+         area_code = `Area code`,
+         area_name = `Area name`,
+         new_cases = `Daily lab-confirmed cases`) %>% 
+  arrange(date) %>% 
+  group_by(area_code, area_name) %>%
+  complete(date = seq.Date(min(date), max(date), by = "day")) %>% 
+  mutate(new_cases = replace_na(new_cases, 0),
+         cum_cases = cumsum(new_cases)) %>% 
+  ungroup() %>% 
+  fill(area_name)
+```
+
+```{r table}
+df <- cases %>% 
+  mutate(period = case_when(
+    date >= max(date)-days(11) & date <= max(date)-days(5) ~ "last_week",
+    date >= max(date)-days(18) & date <= max(date)-days(12) ~ "previous_week"
+  )) %>% 
+  filter(!is.na(period)) %>% 
+  select(-date) %>%
+  group_by(area_code, area_name, period) %>% 
+  summarise(total_cases = sum(new_cases)) %>% 
+  pivot_wider(names_from = period, values_from = total_cases) %>% 
+  select(area_code, area_name, previous_week, last_week) %>% 
+  left_join(population, by = "area_code") %>% 
+  mutate(previous_week_rate = round(previous_week/population*100000,1),
+         last_week_rate = round(last_week/population*100000,1),
+         change = last_week-previous_week,
+         percent_rate = round(change/population*100000,1)) %>% 
+  left_join(
+    cases %>% 
+      select(-area_name) %>% 
+      filter(date >= max(date)-days(18) & date <= max(date)-days(5)) %>% 
+      group_by(area_code) %>% 
+      summarise(new_cases = list(new_cases)) %>% 
+      ungroup(), by = "area_code"
+  ) %>% 
+  ungroup() %>% 
+  select(area_name, new_cases, previous_week, previous_week_rate, 
+         last_week, last_week_rate, change, percent_rate)
+
+sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
+                     borderRight = "1px solid #eee")
+
+with_tooltip <- function(value, tooltip) {
+  span(style = "text-decoration: underline; text-decoration-style: dotted;", title = tooltip, value)
+}
+
+tbl <- reactable(df, 
+                 defaultPageSize = 15,
+                 wrap = FALSE,
+                 resizable = TRUE,
+                 searchable = TRUE,
+                 defaultSorted = "change",
+                 defaultSortOrder = "desc",
+                 defaultColGroup = colGroup(headerClass = "group-header", align = "left"),
+                 defaultColDef = colDef(headerClass = "header", align = "left"),
+                 columns = list(
+                   area_name = colDef(name = "Local authority",
+                                      minWidth = 200,
+                                      style = sticky_style,
+                                      headerStyle = sticky_style,
+                                      align = "left"),
+                   new_cases = colDef(name = "14-day trend", 
+                                      cell = function(value, index) {sparkline(df$new_cases[[index]], type = "line", lineColor = "#387F9D", fillColor = "#AACBD7", lineWidth = 2, spotColor = '#387f9d', minSpotColor = '#387f9d', maxSpotColor = '#e00000', highlightSpotColor = '#000000', highlightLineColor = '#000000', spotRadius = 3)},
+                                      sortable = FALSE),
+                   previous_week = colDef(name = "Cases",
+                                          align = "left"),
+                   previous_week_rate = colDef(name = "per 100,000",
+                                               align = "left"),
+                   last_week = colDef(name = "Cases",
+                                      align = "left"),
+                   last_week_rate = colDef(name = "per 100,000",
+                                           align = "left"),
+                   change = colDef(name = "Cases",
+                                   style = function(value) {
+                                     if (value > 0) {
+                                       color <- "#e00000"
+                                       } else if (value < 0) {
+                                         color <- "#008000"
+                                         } else {
+                                           color <- "#777"
+                                           }
+                                     list(color = color, fontWeight = "bold")
+                                     },
+                                   align = "left"),
+                   percent_rate = colDef(name = "per 100,000",
+                                         align = "left")
+                   ),
+                 columnGroups = list(
+                   colGroup(header = with_tooltip("Previous week", paste("week ending", format(max(cases$date)-days(12),'%A %d %B'))), columns = c("previous_week", "previous_week_rate")),
+                   colGroup(header = with_tooltip("Last week", paste("week ending", format(max(cases$date)-days(5),'%A %d %B'))), columns = c("last_week", "last_week_rate")),
+                   colGroup(name = "Change", columns = c("change", "percent_rate"))
+                   )
+                 )
+```
+
+```{css}
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+.graphic-div {
+  font-family: 'Lato', sans-serif;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.subtitle {
+  margin: 8px 0;
+  font-size: 14px;
+}
+
+.tbl {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.tbl a {
+  color: inherit;
+}
+
+.header {
+  border-bottom: 2px solid #555;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.header:hover {
+  background-color: #eee;
+}
+
+.caption {
+  text-align: right;
+  font-size: 12px;
+  color: #212121;
+}
+```
+
+```{r ui}
+div(class = "graphic-div",
+    div(class = "subtitle",
+        div(class = "title", "Week-on-week change in coronavirus cases by local authority"),
+        paste("Week ending", format(max(cases$date)-days(5),'%A %d %B'), "compared with previous week")
+        ),
+    tbl,
+    div(class = "caption", p("Source: ", a("Public Health England", href = 'https://coronavirus.data.gov.uk/', target = "_blank"), " | ", a("ONS", href = 'https://www.nomisweb.co.uk/datasets/pestsyoala', target = "_blank")))
+    )
+```
