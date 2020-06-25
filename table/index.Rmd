@@ -73,7 +73,7 @@ with_tooltip <- function(value, tooltip) {
 }
 
 tbl <- reactable(df, 
-                 defaultPageSize = 15,
+                 defaultPageSize = 10,
                  wrap = FALSE,
                  resizable = TRUE,
                  searchable = TRUE,
