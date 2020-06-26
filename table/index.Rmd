@@ -183,7 +183,7 @@ tbl <- reactable(df,
 div(class = "graphic-div",
     div(class = "subtitle",
         div(class = "title", "Week-on-week change in coronavirus cases by local authority"),
-        paste0("Cases for the seven days to ", format(max(cases$date)-days(5),'%d %B'), ", compared with the seven days to ", format(max(cases$date)-days(11),'%d %B'))
+        paste0("Cases for the seven days to ", format(max(cases$date)-days(5),'%d %B'), ", compared with the seven days to ", format(max(cases$date)-days(12),'%d %B'))
         ),
     br(),
     tbl,
