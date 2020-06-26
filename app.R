@@ -128,7 +128,7 @@ shinyApp(ui, function(input,output){
   
   new_cases_selection <- reactive(
     filter(cases, area_name == input$ltla) %>% 
-      mutate(ma_cases = rollmean(new_cases, 7, align = "right", fill = NA),
+      mutate(ma_cases = rollmean(new_cases, 7, align = "left", fill = NA),
              tooltip =  paste0("<strong>", new_cases, "</strong> cases<br/>", date))
   )
   

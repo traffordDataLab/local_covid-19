@@ -16,7 +16,7 @@ ltla <- read_csv("https://opendata.arcgis.com/datasets/3e4f4af826d343349c13fb7f0
          area_name = case_when(area_code == "E06000052" ~ "Cornwall and Isles of Scilly", TRUE ~ area_name)) %>% 
   distinct(area_code, .keep_all = TRUE)
 
-# Mid-2018 population estimates
+# Mid-2019 population estimates
 # Source: Nomis / ONS
 # URL: https://www.nomisweb.co.uk/datasets/pestsyoala
 
@@ -30,11 +30,11 @@ population <- read_csv("http://www.nomisweb.co.uk/api/v01/dataset/NM_2002_1.data
 
 # join datasets and write as CSV
 
-left_join(ltla, population, by = "area_code") %>%
+left_join(ltla, population, by = "area_code") %>% 
   write_csv("ltla.csv")
 
 # -------------------------------------------
-# Registered deaths - up to 1 May 2020
+# Registered deaths
 # -------------------------------------------
 
 # Source: Office for National Statistics
