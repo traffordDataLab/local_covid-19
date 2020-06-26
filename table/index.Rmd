@@ -52,7 +52,7 @@ df <- cases %>%
   mutate(previous_week_rate = round(previous_week/population*100000,1),
          current_week_rate = round(current_week/population*100000,1),
          change = current_week-previous_week,
-         percent_rate = round(change/population*100000,1)) %>% 
+         change_rate = round(change/population*100000,1)) %>% 
   left_join(
     cases %>% 
       select(-area_name) %>% 
@@ -63,7 +63,7 @@ df <- cases %>%
   ) %>% 
   ungroup() %>% 
   select(area_name, new_cases, previous_week, current_week, change, previous_week_rate, 
-         current_week_rate, percent_rate)
+         current_week_rate, change_rate)
 
 sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
                      borderRight = "1px solid #eee")
@@ -73,14 +73,17 @@ with_tooltip <- function(value, tooltip) {
 }
 
 tbl <- reactable(df, 
-                 defaultPageSize = 10,
+                 defaultPageSize = 20,
+                 compact = TRUE,
+                 outlined = TRUE,
+                 borderless = TRUE,
                  wrap = FALSE,
                  resizable = TRUE,
-                 searchable = TRUE,
+                 filterable = TRUE,
                  defaultSorted = "change",
                  defaultSortOrder = "desc",
                  defaultColGroup = colGroup(headerClass = "group-header", align = "left"),
-                 defaultColDef = colDef(headerClass = "header", align = "left"),
+                 defaultColDef = colDef(align = "left"),
                  columns = list(
                    area_name = colDef(name = "Local authority",
                                       minWidth = 200,
@@ -89,11 +92,14 @@ tbl <- reactable(df,
                                       align = "left"),
                    new_cases = colDef(name = "14-day trend", 
                                       cell = function(value, index) {sparkline(df$new_cases[[index]], type = "line", lineColor = "#387F9D", fillColor = "#AACBD7", lineWidth = 2, spotColor = '#387f9d', minSpotColor = '#387f9d', maxSpotColor = '#e00000', highlightSpotColor = '#000000', highlightLineColor = '#000000', spotRadius = 3)},
+                                      filterable = FALSE,
                                       sortable = FALSE),
-                   previous_week = colDef(header = with_tooltip("Previous week", paste("week ending", format(max(cases$date)-days(12),'%A %d %B'))),
+                   previous_week = colDef(header = with_tooltip("Previous", paste("Week ending", format(max(cases$date)-days(12),'%A %d %B'))),
+                                          filterable = FALSE,
                                           align = "left"),
-                   current_week = colDef(header = with_tooltip("Current week", paste("week ending", format(max(cases$date)-days(5),'%A %d %B'))),
-                                      align = "left"),
+                   current_week = colDef(header = with_tooltip("Current", paste("Week ending", format(max(cases$date)-days(5),'%A %d %B'))),
+                                         filterable = FALSE,
+                                         align = "left"),
                    change = colDef(name = "Change",
                                    style = function(value) {
                                      if (value > 0) {
@@ -105,12 +111,15 @@ tbl <- reactable(df,
                                            }
                                      list(color = color, fontWeight = "bold")
                                      },
+                                   filterable = FALSE,
                                    align = "left"),
-                   previous_week_rate = colDef(header = with_tooltip("Previous week", paste("week ending", format(max(cases$date)-days(12),'%A %d %B'))),
+                   previous_week_rate = colDef(header = with_tooltip("Previous", paste("Week ending", format(max(cases$date)-days(12),'%A %d %B'))),
+                                               filterable = FALSE,
                                                align = "left"),
-                   current_week_rate = colDef(header = with_tooltip("Current week", paste("week ending", format(max(cases$date)-days(5),'%A %d %B'))),
-                                           align = "left"),
-                   percent_rate = colDef(name = "Change",
+                   current_week_rate = colDef(header = with_tooltip("Current", paste("Week ending", format(max(cases$date)-days(5),'%A %d %B'))),
+                                              filterable = FALSE,
+                                              align = "left"),
+                   change_rate = colDef(name = "Change",
                                          style = function(value) {
                                      if (value > 0) {
                                        color <- "#e00000"
@@ -121,11 +130,12 @@ tbl <- reactable(df,
                                            }
                                      list(color = color, fontWeight = "bold")
                                      },
-                                         align = "left")
+                                     filterable = FALSE,
+                                     align = "left")
                    ),
                  columnGroups = list(
                    colGroup(header = "Cases", columns = c("previous_week", "current_week", "change")),
-                   colGroup(header = "Per 100,000", columns = c("previous_week_rate", "current_week_rate", "percent_rate"))
+                   colGroup(header = "Per 100,000", columns = c("previous_week_rate", "current_week_rate", "change_rate"))
                    )
                  )
 ```
@@ -162,10 +172,6 @@ tbl <- reactable(df,
   font-weight: bold;
 }
 
-.header:hover {
-  background-color: #eee;
-}
-
 .caption {
   text-align: right;
   font-size: 12px;
@@ -177,9 +183,10 @@ tbl <- reactable(df,
 div(class = "graphic-div",
     div(class = "subtitle",
         div(class = "title", "Week-on-week change in coronavirus cases by local authority"),
-        paste("Week ending", format(max(cases$date)-days(5),'%A %d %B'), "compared with previous week")
+        paste0("Cases for the seven days to ", format(max(cases$date)-days(5),'%d %B'), ", compared with the seven days to ", format(max(cases$date)-days(11),'%d %B'))
         ),
+    br(),
     tbl,
-    div(class = "caption", p("Source: ", a("Public Health England", href = 'https://coronavirus.data.gov.uk/', target = "_blank"), " | ", a("ONS", href = 'https://www.nomisweb.co.uk/datasets/pestsyoala', target = "_blank")))
-    )
+    div(class = "caption", p("Source: ", a("Public Health England", href = 'https://coronavirus.data.gov.uk/', target = "_blank"), " | ", a("Office for National Statistics", href = 'https://www.nomisweb.co.uk/datasets/pestsyoala', target = "_blank")))
+)
 ```
