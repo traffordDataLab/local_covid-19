@@ -74,12 +74,13 @@ with_tooltip <- function(value, tooltip) {
 
 tbl <- reactable(df, 
                  defaultPageSize = 20,
-                 compact = TRUE,
+                 paginationType = "simple",
+                 compact = FALSE,
                  outlined = TRUE,
                  borderless = TRUE,
                  wrap = FALSE,
                  resizable = TRUE,
-                 filterable = TRUE,
+                 searchable = TRUE,
                  defaultSorted = "change",
                  defaultSortOrder = "desc",
                  defaultColGroup = colGroup(headerClass = "group-header", align = "left"),
@@ -91,14 +92,14 @@ tbl <- reactable(df,
                                       headerStyle = sticky_style,
                                       align = "left"),
                    new_cases = colDef(name = "14-day trend", 
-                                      cell = function(value, index) {sparkline(df$new_cases[[index]], type = "line", lineColor = "#387F9D", fillColor = "#AACBD7", lineWidth = 2, spotColor = '#387f9d', minSpotColor = '#387f9d', maxSpotColor = '#e00000', highlightSpotColor = '#000000', highlightLineColor = '#000000', spotRadius = 3)},
-                                      filterable = FALSE,
+                                      cell = function(value, index) {sparkline(df$new_cases[[index]], type = "bar", barColor = "#39809E", zeroColor = "#FFFFFF", barWidth = 10, barSpacing = 2, chartRangeMin = 0, chartRangeMax = max(pull(filter(cases, date >= max(date)-days(18)), new_cases)))},
+                                      # line chart
+                   # new_cases = colDef(name = "14-day trend", 
+                   #                    cell = function(value, index) {sparkline(df$new_cases[[index]], type = "line", lineColor = "#5E5E5E", fillColor = "#DFDFDF", lineWidth = 2, spotColor = '#5E5E5E', minSpotColor = '#5E5E5E', maxSpotColor = '#e00000', highlightSpotColor = '#000000', highlightLineColor = '#000000', spotRadius = 3)},
                                       sortable = FALSE),
                    previous_week = colDef(header = with_tooltip("Previous", paste("Week ending", format(max(cases$date)-days(12),'%A %d %B'))),
-                                          filterable = FALSE,
                                           align = "left"),
                    current_week = colDef(header = with_tooltip("Current", paste("Week ending", format(max(cases$date)-days(5),'%A %d %B'))),
-                                         filterable = FALSE,
                                          align = "left"),
                    change = colDef(name = "Change",
                                    style = function(value) {
@@ -111,13 +112,10 @@ tbl <- reactable(df,
                                            }
                                      list(color = color, fontWeight = "bold")
                                      },
-                                   filterable = FALSE,
                                    align = "left"),
                    previous_week_rate = colDef(header = with_tooltip("Previous", paste("Week ending", format(max(cases$date)-days(12),'%A %d %B'))),
-                                               filterable = FALSE,
                                                align = "left"),
                    current_week_rate = colDef(header = with_tooltip("Current", paste("Week ending", format(max(cases$date)-days(5),'%A %d %B'))),
-                                              filterable = FALSE,
                                               align = "left"),
                    change_rate = colDef(name = "Change",
                                          style = function(value) {
@@ -130,7 +128,6 @@ tbl <- reactable(df,
                                            }
                                      list(color = color, fontWeight = "bold")
                                      },
-                                     filterable = FALSE,
                                      align = "left")
                    ),
                  columnGroups = list(
