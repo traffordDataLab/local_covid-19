@@ -73,10 +73,10 @@ with_tooltip <- function(value, tooltip) {
 }
 
 tbl <- reactable(df, 
-                 defaultPageSize = 20,
+                 defaultPageSize = 10,
                  paginationType = "simple",
+                 showPageSizeOptions = TRUE,
                  compact = FALSE,
-                 outlined = TRUE,
                  borderless = TRUE,
                  wrap = FALSE,
                  resizable = TRUE,
