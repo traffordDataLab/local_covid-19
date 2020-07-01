@@ -130,8 +130,9 @@ div(class = "container-fluid",
   div(class = "row",
       div(class = "col-sm-6", map),
       div(class = "col-sm-6", list(filter, tbl)),
-      br(),
-      div(class = "caption", p("Source: ", a("Public Health England weekly COVID-19 surveillance report", href = 'https://www.gov.uk/government/publications/national-covid-19-surveillance-reports', target = "_blank")))
+  ),
+  br(),
+  div(class = "caption", p("Source: ", a("Public Health England weekly COVID-19 surveillance report", href = 'https://www.gov.uk/government/publications/national-covid-19-surveillance-reports', target = "_blank"))
       )
   )
 ```
