@@ -1,0 +1,137 @@
+---
+pagetitle: "Pillar 1 and 2 COVID-19 cases"
+output: html_document
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+library(tidyverse) ; library(sf) ; library(rvest) ; library(httr) ; library(readxl) ;
+library(crosstalk) ; library(reactable) ; library(leaflet) ; library(htmltools) ; library(shiny)
+
+# Upper tier local authority boundaries
+# Source: Open Geography Portal, ONS
+# URL: https://geoportal.statistics.gov.uk/datasets/counties-and-unitary-authorities-december-2019-boundaries-uk-bgc/data
+
+utla <- st_read("https://opendata.arcgis.com/datasets/29827d4c079349888acd7db3f84e3449_0.geojson") %>% 
+  filter(str_detect(ctyua19cd, "^E")) %>% 
+  select(area_code = `ctyua19cd`, long, lat)
+
+# Weekly rate of COVID-19 cases by UTLA for Pillar 1 and 2
+# Source: National COVID-19 surveillance reports, Public Health England
+# URL: https://www.gov.uk/government/publications/national-covid-19-surveillance-reports
+
+# check date!!
+period <- "15 and 21 June 2020"
+
+tmp <- tempfile(fileext = ".xlsx")
+url <- read_html("https://www.gov.uk/government/publications/national-covid-19-surveillance-reports") %>% 
+  html_nodes("a") %>%
+  html_attr("href") %>%
+  str_subset("\\.xlsx") %>% 
+  .[[1]]
+
+GET(url = url,
+    write_disk(tmp))
+
+cases <- read_xlsx(tmp, sheet = 10, skip = 7) %>% 
+  select(area_code = `UTLA code`, area_name = `UTLA name`, rate = `Rate per 100,000 population`)
+
+# Transform the data
+df <- cases %>% 
+  # join UTLA centroids
+  left_join(st_set_geometry(utla, NULL), by = "area_code") %>% 
+  # add popup
+  mutate(popup = str_c("<strong>", area_name, "</strong><br/><strong>", rate, "</strong> cases per 100,000") %>% map(HTML))
+
+# Create a shared data frame
+sd <- SharedData$new(df, group = "area_name")
+sd_tbl <- df %>% select(area_name, rate) %>%
+  SharedData$new(group = "area_name")
+```
+
+```{r filter}
+filter <- filter_slider(id = "rate", label = "Cases per 100,000", sharedData = sd, column = ~rate, step = 1, ticks = FALSE)
+```
+
+
+```{r map}
+map <- leaflet(data = sd, width = "100%", height = 550) %>%
+  setView(-2.07811, 53.23497, zoom = 6) %>% 
+  addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2020)</a>') %>%
+  addPolygons(data = utla, fillColor = "#EAEAEA", fillOpacity = 0.3, weight = 1, color = "#bdbdbd")  %>% 
+  addCircleMarkers(lng = ~long, lat = ~lat, radius = ~sqrt(rate), fillColor = "#57AACB", fillOpacity = 0.8, weight = 1, color = "#FFFFFF", opacity = 1, label = ~popup, labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"), textsize = "13px", direction = "auto"))
+```
+
+```{r table}
+tbl <- reactable(sd_tbl,
+                 defaultPageSize = 10,
+                 paginationType = "simple",
+                 compact = FALSE,
+                 borderless = TRUE,
+                 wrap = FALSE,
+                 resizable = TRUE,
+                 searchable = TRUE,
+                 defaultSorted = "rate",
+                 defaultSortOrder = "desc",
+                 defaultColDef = colDef(align = "left"),
+                 selection = "multiple",
+                 onClick = "select",
+                 rowStyle = list(cursor = "pointer"),
+                 columns = list(
+                   area_name = colDef(name = "Upper Tier Local Authority",
+                                      align = "left"),
+                   rate = colDef(name = "Cases per 100,000",
+                                 align = "left")
+                   )
+                 )
+```
+
+```{css}
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+div {
+  font-family: 'Lato', sans-serif;
+}
+
+.title {
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.subtitle {
+  margin: 8px 0;
+  font-size: 18px;
+}
+
+.tbl {
+  font-size: 14px;
+  line-height: 18px;
+}
+
+.tbl a {
+  color: inherit;
+}
+
+.caption {
+  text-align: right;
+  font-size: 14px;
+  color: #212121;
+}
+```
+
+
+```{r ui}
+div(class = "container-fluid",
+  div(class = "subtitle",
+      div(class = "title", "Weekly rate of COVID-19 cases per 100,000 population tested under ", a("Pillar 1 and 2", href = 'https://www.gov.uk/government/publications/coronavirus-covid-19-scaling-up-testing-programmes/coronavirus-covid-19-scaling-up-our-testing-programmes', target = "_blank"), " by Upper Tier Local Authority in England"), 
+      paste0("New cases between ", period)
+      ),
+  br(),
+  div(class = "row",
+      div(class = "col-sm-6", map),
+      div(class = "col-sm-6", list(filter, tbl)),
+      br(),
+      div(class = "caption", p("Source: ", a("Public Health England weekly COVID-19 surveillance report", href = 'https://www.gov.uk/government/publications/national-covid-19-surveillance-reports', target = "_blank")))
+      )
+  )
+```
