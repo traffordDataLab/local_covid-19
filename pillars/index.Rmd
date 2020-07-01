@@ -57,7 +57,7 @@ filter <- filter_slider(id = "rate", label = "Cases per 100,000", sharedData = s
 ```{r map}
 map <- leaflet(data = sd, width = "100%", height = 550) %>%
   setView(-2.07811, 53.23497, zoom = 6) %>% 
-  addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2020)</a>') %>%
+  addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2020)</a> | Data: <a href="https://www.gov.uk/government/publications/national-covid-19-surveillance-reports" target="_blank">Public Health England</a>') %>%
   addPolygons(data = utla, fillColor = "#EAEAEA", fillOpacity = 0.3, weight = 1, color = "#bdbdbd")  %>% 
   addCircleMarkers(lng = ~long, lat = ~lat, radius = ~sqrt(rate), fillColor = "#57AACB", fillOpacity = 0.8, weight = 1, color = "#FFFFFF", opacity = 1, label = ~popup, labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"), textsize = "13px", direction = "auto"))
 ```
@@ -129,10 +129,7 @@ div(class = "container-fluid",
   br(),
   div(class = "row",
       div(class = "col-sm-6", map),
-      div(class = "col-sm-6", list(filter, tbl)),
-  ),
-  br(),
-  div(class = "caption", p("Source: ", a("Public Health England weekly COVID-19 surveillance report", href = 'https://www.gov.uk/government/publications/national-covid-19-surveillance-reports', target = "_blank"))
+      div(class = "col-sm-6", list(filter, tbl))
       )
   )
 ```
