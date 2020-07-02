@@ -1,6 +1,11 @@
 ---
 pagetitle: "Pillar 1 and 2 COVID-19 cases"
-output: html_document
+lang: "en-GB"
+output:
+  html_document:
+    css: styles.css
+    highlight: null
+    mathjax: null
 ---
 
 ```{r setup, include = FALSE}
@@ -85,45 +90,11 @@ tbl <- reactable(sd_tbl,
                    )
                  )
 ```
-
-```{css}
-@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
-
-div {
-  font-family: 'Lato', sans-serif;
-}
-
-.title {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.subtitle {
-  margin: 8px 0;
-  font-size: 18px;
-}
-
-.tbl {
-  font-size: 14px;
-  line-height: 18px;
-}
-
-.tbl a {
-  color: inherit;
-}
-
-.caption {
-  text-align: right;
-  font-size: 14px;
-  color: #212121;
-}
-```
-
-
+<main>
 ```{r ui}
 div(class = "container-fluid",
   div(class = "subtitle",
-      div(class = "title", "Weekly rate of COVID-19 cases per 100,000 population tested under ", a("Pillar 1 and 2", href = 'https://www.gov.uk/government/publications/coronavirus-covid-19-scaling-up-testing-programmes/coronavirus-covid-19-scaling-up-our-testing-programmes', target = "_blank"), " by Upper Tier Local Authority in England"), 
+      h1(class = "title", "Weekly rate of COVID-19 cases per 100,000 population tested under ", a("Pillar 1 and 2", href = 'https://www.gov.uk/government/publications/coronavirus-covid-19-scaling-up-testing-programmes/coronavirus-covid-19-scaling-up-our-testing-programmes', target = "_blank"), " by Upper Tier Local Authority in England"), 
       paste0("New cases between ", period)
       ),
   br(),
@@ -133,3 +104,131 @@ div(class = "container-fluid",
       )
   )
 ```
+</main>
+<script>
+  // Add aria-label to the crosstalk selection button from the Leaflet map. Map may not have initialised at this point so set up an interval to keep calling until it has
+  var updateSelectionButtonFn = setInterval(updateSelectionButton, 100);
+  
+  function updateSelectionButton() {
+    try {
+      // We don't have an id or name so have to do it by classname and then check we have the correct button by testing the 'title' attribute
+      var arrEasyButtons = document.getElementsByClassName('easy-button-button');
+  
+      for (var i = 0; i < arrEasyButtons.length; i++) {
+        if (arrEasyButtons[i].title == "Make a selection") {
+          // set aria-label to describe the function of the button
+          arrEasyButtons[i].setAttribute('aria-label', 'Define an area on the map and filter the dataset to only that area.');
+          
+          clearInterval(updateSelectionButtonFn);  // cancel any further calls to this function as we have completed all actions
+        }
+      }
+    }
+    catch(e) {
+      clearInterval(updateSelectionButtonFn);   // something went wrong so cancel fn call
+    }
+  }
+  
+  
+  // Add type="hidden" attribute to all form elements with classname "irs-hidden-input" to remove errors in
+  // WAVE due to the inputs not having labels. (NOTE these are elements to hold the values for slider widgets)
+  // The controls may not have initialised at this point so set up an interval to keep calling until they have
+  var addInputHiddenFn = setInterval(addInputHidden, 500);
+  
+  function addInputHidden() {
+    try {
+      var arrHiddenInputs = document.getElementsByClassName('irs-hidden-input');
+    
+      if (arrHiddenInputs.length > 0) {
+        for (var i = 0; i < arrHiddenInputs.length; i++) {
+          arrHiddenInputs[i].setAttribute('type', 'hidden');
+        }
+        
+        clearInterval(addInputHiddenFn);   // cancel any further calls to this function as we have completed all actions
+      }
+    }
+    catch(e) {
+      clearInterval(addInputHiddenFn);   // something went wrong so cancel fn call
+    }
+  }
+  
+  
+  // Remove label tags created by crosstalk for the checkboxes and sliders as they cause validation errors,
+  // and replace them with fieldsets and legends containing the text of the label
+  // Reason for the error is that the 'for' attribute isn't referencing an id of a form control
+  // NOTE: the do while loop always references array index 0 because as the elements are removed from the DOM they are also removed from the array
+  var arrFormLabels = document.getElementsByClassName('control-label');
+  var parent;
+  var labelText;
+  var newNode;
+  var fieldset;
+  var legend;
+  
+  do {
+    parent = arrFormLabels[0].parentNode;                   // container of the label
+    labelText = arrFormLabels[0].firstChild.textContent;    // get the label text we want to preserve
+    
+    // create the new fieldset and legend nodes first
+    legend = document.createElement('legend');
+    legend.appendChild(document.createTextNode(labelText));
+    legend.setAttribute('class', 'formGroupHeading');
+    fieldset = document.createElement('fieldset');
+    fieldset.appendChild(legend);
+    
+    parent.removeChild(arrFormLabels[0]);   // remove the old label
+    
+    // Now add all the children of parent to the newly created fieldset
+    while (parent.childNodes.length > 0) {
+      fieldset.appendChild(parent.childNodes[0]);
+    }
+    
+    parent.appendChild(fieldset);    // add the fieldset to the parent
+    
+    // For the slider widgets we also need to add an aria-label to describe the purpose of the group
+    if (parent.classList.contains('crosstalk-input-slider')) {
+      parent.setAttribute('aria-label', 'Slider range control for ' + labelText);
+      parent.setAttribute('tabindex', '0');    // allow the slider group to be accessed via tab
+    }
+  }
+  while (arrFormLabels.length > 0);
+  
+  
+  // Add aria-labels to the slider components
+  // The inner controls may not have initialised at this point so set up an interval to keep calling until they have
+  var slidersFn = setInterval(sliders, 500);
+  
+  function sliders() {
+    try {
+      var arrSliders = document.getElementsByClassName('crosstalk-input-slider');   // The div surrounding the control group
+    
+      var arrMinValues = document.getElementsByClassName('irs-min');          // range min label
+      var arrMaxValues = document.getElementsByClassName('irs-max');          // range max label
+      var arrFromValues = document.getElementsByClassName('irs-from');        // range from label
+      var arrToValues = document.getElementsByClassName('irs-to');            // range to label
+      var arrSingleValues = document.getElementsByClassName('irs-single');    // range from - to label
+      var arrSliderHandles = document.getElementsByClassName('irs-slider');   // the handles on the sliders
+      
+      if (arrFromValues.length == arrSliders.length) {
+        // We know how many sliders there are on the page as their containers are written into the HTML.
+        // The actual slider widgets are dynamically created within them at runtime.
+        // If the array lengths match we know that the widgets have all been created
+        for (var i = 0; i < arrSliders.length; i++) {
+          arrMinValues[i].setAttribute('aria-label', 'Minimum range value');
+          arrMaxValues[i].setAttribute('aria-label', 'Maximum range value');
+          arrFromValues[i].setAttribute('aria-label', 'Lower range value');
+          arrToValues[i].setAttribute('aria-label', 'Upper range value');
+          arrSingleValues[i].setAttribute('aria-label', 'Range values');
+        }
+        
+        // these are the slider handles
+        for (var i = 0; i < arrSliderHandles.length; i++) {
+          arrSliderHandles[i].setAttribute('aria-label', 'slider handle');    // not using role="slider" as unfortunately this control doesn't seem to conform to the WAI-ARIA specification for the slider role
+        }
+        
+        clearInterval(slidersFn);   // cancel any further calls to this function as we have completed all actions
+      }
+    }
+    catch(e) {
+      clearInterval(slidersFn);   // something went wrong so cancel fn call
+    }
+  }
+</script>
