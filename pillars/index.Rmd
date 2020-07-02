@@ -10,8 +10,7 @@ output:
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
-library(tidyverse) ; library(sf) ; library(rvest) ; library(httr) ; library(readxl) ;
-library(crosstalk) ; library(reactable) ; library(leaflet) ; library(htmltools) ; library(shiny)
+library(tidyverse) ; library(sf) ; library(crosstalk) ; library(reactable) ; library(leaflet) ; library(htmltools) ; library(shiny)
 
 # Upper tier local authority boundaries
 # Source: Open Geography Portal, ONS
@@ -25,39 +24,36 @@ utla <- st_read("https://opendata.arcgis.com/datasets/29827d4c079349888acd7db3f8
 # Source: National COVID-19 surveillance reports, Public Health England
 # URL: https://www.gov.uk/government/publications/national-covid-19-surveillance-reports
 
-# check date!!
-period <- "22 and 28 June 2020"
+# check latest week period!
+current_week_dates <- "22-28 June"
+previous_week_dates <- "15-21 June"
 
-tmp <- tempfile(fileext = ".xlsx")
-url <- read_html("https://www.gov.uk/government/publications/national-covid-19-surveillance-reports") %>% 
-  html_nodes("a") %>%
-  html_attr("href") %>%
-  str_subset("\\.xlsx") %>% 
-  .[[1]]
+# Weekly rate of COVID-19 cases by UTLA for Pillar 1 and 2
+# Source: National COVID-19 surveillance reports, Public Health England
+# URL: https://www.gov.uk/government/publications/national-covid-19-surveillance-reports
 
-GET(url = url,
-    write_disk(tmp))
-
-cases <- read_xlsx(tmp, sheet = 10, skip = 7) %>% 
-  select(area_code = `UTLA code`, area_name = `UTLA name`, rate = `Rate per 100,000 population`) %>%
-  mutate(rate = as.numeric(rate),
-         rate = replace_na(rate, 0))
+cases <- read_csv("weekly_rates.csv")
 
 # Transform the data
 df <- cases %>% 
   # join UTLA centroids
   left_join(st_set_geometry(utla, NULL), by = "area_code") %>% 
   # add popup
-  mutate(popup = str_c("<strong>", area_name, "</strong><br/><strong>", rate, "</strong> cases per 100,000") %>% map(HTML))
+  mutate(popup = str_c("<strong>", area_name, "</strong><br/>", current_week_dates, ":<strong> ", current_week, "</strong><br/>", previous_week_dates, ":<strong> ", previous_week, "</strong><br/>Change:<strong> ", change, "</strong>") %>% map(HTML),
+         colour = case_when(
+           change > 0 ~ "#e00000",
+           change < 0 ~ "#008000",
+           TRUE ~ "#777"
+         ))
 
 # Create a shared data frame
 sd <- SharedData$new(df, group = "area_name")
-sd_tbl <- df %>% select(area_name, rate) %>%
+sd_tbl <- df %>% select(area_name, previous_week, current_week, change) %>%
   SharedData$new(group = "area_name")
 ```
 
 ```{r filter}
-filter <- filter_slider(id = "rate", label = "Cases per 100,000", sharedData = sd, column = ~rate, step = 1, ticks = FALSE)
+filter <- filter_slider(id = "current_week", label = paste0("Cases per 100,000 between ", current_week_dates), sharedData = sd, column = ~current_week, step = 1, ticks = FALSE)
 ```
 
 
@@ -66,7 +62,7 @@ map <- leaflet(data = sd, width = "100%", height = 550) %>%
   setView(-2.07811, 53.23497, zoom = 6) %>% 
   addTiles(urlTemplate = "https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png", attribution = '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a> | <a href="https://www.ons.gov.uk/methodology/geography/licences">Contains OS data © Crown copyright and database right (2020)</a> | Data: <a href="https://www.gov.uk/government/publications/national-covid-19-surveillance-reports" target="_blank">Public Health England</a>') %>%
   addPolygons(data = utla, fillColor = "#EAEAEA", fillOpacity = 0.3, weight = 1, color = "#bdbdbd")  %>% 
-  addCircleMarkers(lng = ~long, lat = ~lat, radius = ~sqrt(rate), fillColor = "#57AACB", fillOpacity = 0.8, weight = 1, color = "#FFFFFF", opacity = 1, label = ~popup, labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"), textsize = "13px", direction = "auto"))
+  addCircleMarkers(lng = ~long, lat = ~lat, radius = ~sqrt(current_week), fillColor = ~colour, fillOpacity = 0.6, weight = 1, color = "#FFFFFF", opacity = 1, label = ~popup, labelOptions = labelOptions(style = list("font-weight" = "normal", padding = "3px 8px"), textsize = "13px", direction = "auto"))
 ```
 
 ```{r table}
@@ -78,17 +74,31 @@ tbl <- reactable(sd_tbl,
                  wrap = FALSE,
                  resizable = TRUE,
                  searchable = TRUE,
-                 defaultSorted = "rate",
+                 defaultSorted = "current_week",
                  defaultSortOrder = "desc",
                  defaultColDef = colDef(align = "left"),
                  selection = "multiple",
                  onClick = "select",
                  rowStyle = list(cursor = "pointer"),
                  columns = list(
-                   area_name = colDef(name = "Upper Tier Local Authority",
+                   area_name = colDef(name = "Authority",
                                       align = "left"),
-                   rate = colDef(name = "Cases per 100,000",
-                                 align = "left")
+                   previous_week = colDef(name = previous_week_dates,
+                                 align = "left"),
+                   current_week = colDef(name = current_week_dates,
+                                 align = "left"),
+                   change = colDef(name = "Change",
+                                   align = "left",
+                                   style = function(value) {
+                                     if (value > 0) {
+                                       color <- "#e00000"
+                                       } else if (value < 0) {
+                                         color <- "#008000"
+                                         } else {
+                                           color <- "#777"
+                                           }
+                                     list(color = color, fontWeight = "bold")
+                                     })
                    )
                  )
 ```
@@ -96,8 +106,8 @@ tbl <- reactable(sd_tbl,
 ```{r ui}
 div(class = "container-fluid",
   div(class = "subtitle",
-      h1(class = "title", "Weekly rate of COVID-19 cases per 100,000 population tested under ", a("Pillar 1 and 2", href = 'https://www.gov.uk/government/publications/coronavirus-covid-19-scaling-up-testing-programmes/coronavirus-covid-19-scaling-up-our-testing-programmes', target = "_blank"), " by Upper Tier Local Authority in England"), 
-      paste0("New cases between ", period)
+      h1(class = "title", "Weekly rate of COVID-19 cases identified by pillar 1 and 2 testing in England"), 
+      paste0("New cases between ", current_week_dates, " compared with ", previous_week_dates)
       ),
   br(),
   div(class = "row",
