@@ -51,7 +51,7 @@ ext <- read_html("https://www.ons.gov.uk/peoplepopulationandcommunity/healthands
 GET(url = paste0("https://www.ons.gov.uk", ext),
     write_disk(tmp))
 
-read_xlsx(tmp, sheet = 4, skip = 3) %>% 
+read_xlsx(tmp, sheet = 4, skip = 3) %>%
   clean_names() %>% 
   pivot_wider(names_from = cause_of_death, values_from = number_of_deaths) %>% 
   rename(`COVID-19` = `COVID 19`) %>% 
@@ -62,5 +62,5 @@ read_xlsx(tmp, sheet = 4, skip = 3) %>%
   group_by(area_code, area_name, date, week_number, place_of_death) %>% 
   summarise(`COVID-19` = sum(`COVID-19`),
             `Other causes` = sum(`Other causes`)) %>% 
-  pivot_longer(-c(area_code, area_name, week_number, date, place_of_death), names_to = "cause_of_death", values_to = "number_of_deaths") %>% 
+  pivot_longer(-c(area_code, area_name, week_number, date, place_of_death), names_to = "cause_of_death", values_to = "number_of_deaths") %>%
   write_csv("deaths.csv")
