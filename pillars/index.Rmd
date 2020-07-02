@@ -26,7 +26,7 @@ utla <- st_read("https://opendata.arcgis.com/datasets/29827d4c079349888acd7db3f8
 # URL: https://www.gov.uk/government/publications/national-covid-19-surveillance-reports
 
 # check date!!
-period <- "15 and 21 June 2020"
+period <- "22 and 28 June 2020"
 
 tmp <- tempfile(fileext = ".xlsx")
 url <- read_html("https://www.gov.uk/government/publications/national-covid-19-surveillance-reports") %>% 
@@ -39,7 +39,9 @@ GET(url = url,
     write_disk(tmp))
 
 cases <- read_xlsx(tmp, sheet = 10, skip = 7) %>% 
-  select(area_code = `UTLA code`, area_name = `UTLA name`, rate = `Rate per 100,000 population`)
+  select(area_code = `UTLA code`, area_name = `UTLA name`, rate = `Rate per 100,000 population`) %>%
+  mutate(rate = as.numeric(rate),
+         rate = replace_na(rate, 0))
 
 # Transform the data
 df <- cases %>% 
