@@ -179,7 +179,7 @@ tbl <- reactable(df,
 ```{r ui}
 div(class = "graphic-div",
     div(class = "subtitle",
-        div(class = "title", "Week-on-week change in coronavirus cases tested under", a("pillar 1", href = 'https://www.gov.uk/government/publications/coronavirus-covid-19-scaling-up-testing-programmes/coronavirus-covid-19-scaling-up-our-testing-programmes#pillar1', target = "_blank"), "by local authority"),
+        div(class = "title", "Week-on-week change in the number of positive cases identified through ", a("pillar 1 and 2", href = 'https://www.gov.uk/government/publications/coronavirus-covid-19-scaling-up-testing-programmes/coronavirus-covid-19-scaling-up-our-testing-programmes', target = "_blank"), " testing by local authority"),
         paste0("New cases during the week ending ", format(max(cases$date)-days(5),'%d %B'), ", compared with the week ending ", format(max(cases$date)-days(12),'%d %B'))
         ),
     br(),
