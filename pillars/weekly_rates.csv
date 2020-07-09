@@ -1,151 +1,151 @@
 area_code,area_name,previous_week,current_week,change
-E09000002,Barking and Dagenham,1.4,5.7,4.3
-E09000003,Barnet,2.3,1.5,-0.8
-E08000016,Barnsley,54.6,35.1,-19.5
-E06000022,Bath and North East Somerset,1,0,-1
-E06000055,Bedford,42,18.1,-23.9
-E09000004,Bexley,4.5,3.2,-1.3
-E08000025,Birmingham,9.6,6.5,-3.1
-E06000008,Blackburn with Darwen,32.9,20.8,-12.1
-E06000009,Blackpool,10.8,13.6,2.8
-E08000001,Bolton,15.8,23.5,7.7
-E06000058,"Bournemouth, Christchurch and Poole",1.3,1,-0.3
-E06000036,Bracknell Forest,4.1,1.6,-2.5
-E08000032,Bradford,69.4,45.8,-23.6
-E09000005,Brent,5.1,5.4,0.3
-E06000043,Brighton and Hove,5.2,2.4,-2.8
-E06000023,"Bristol, City of",1.9,1.9,0
-E09000006,Bromley,2.1,0.6,-1.5
-E10000002,Buckinghamshire,6.1,3.5,-2.6
-E08000002,Bury,13.2,6.3,-6.9
-E08000033,Calderdale,12.4,14.8,2.4
-E10000003,Cambridgeshire,5.1,3.7,-1.4
-E09000007,Camden,1.9,0.4,-1.5
-E06000056,Central Bedfordshire,15.9,5.6,-10.3
-E06000049,Cheshire East,16,11.3,-4.7
-E06000050,Cheshire West and Chester,12.3,9.7,-2.6
+E09000002,Barking and Dagenham,5.7,2.8,-2.9
+E09000003,Barnet,1.5,2.6,1.1
+E08000016,Barnsley,35.1,17.1,-18
+E06000022,Bath and North East Somerset,0,0,0
+E06000055,Bedford,18.1,19.8,1.7
+E09000004,Bexley,3.2,2.8,-0.4
+E08000025,Birmingham,6.5,5.4,-1.1
+E06000008,Blackburn with Darwen,20.8,24.2,3.4
+E06000009,Blackpool,13.6,5.7,-7.9
+E08000001,Bolton,23.5,15.1,-8.4
+E06000058,"Bournemouth, Christchurch and Poole",1,1,0
+E06000036,Bracknell Forest,1.6,0.8,-0.8
+E08000032,Bradford,45.8,31.8,-14
+E09000005,Brent,5.4,2.7,-2.7
+E06000043,Brighton and Hove,2.4,2.1,-0.3
+E06000023,"Bristol, City of",1.9,1.5,-0.4
+E09000006,Bromley,0.6,2.1,1.5
+E10000002,Buckinghamshire,3.5,5.7,2.2
+E08000002,Bury,6.3,9.5,3.2
+E08000033,Calderdale,14.8,10,-4.8
+E10000003,Cambridgeshire,3.7,2.8,-0.9
+E09000007,Camden,0.4,0.8,0.4
+E06000056,Central Bedfordshire,5.6,4.9,-0.7
+E06000049,Cheshire East,11.3,5.8,-5.5
+E06000050,Cheshire West and Chester,9.7,11.5,1.8
 E09000001,City of London,0,0,0
-E06000052,Cornwall and Isles of Scilly,0.7,1.4,0.7
-E06000047,County Durham,5.1,4.5,-0.6
-E08000026,Coventry,5.7,1.4,-4.3
-E09000008,Croydon,1.6,2.8,1.2
-E10000006,Cumbria,5.8,3.6,-2.2
-E06000005,Darlington,4.7,0.9,-3.8
-E06000015,Derby,24.5,12.8,-11.7
-E10000007,Derbyshire,9.7,6.5,-3.2
-E10000008,Devon,1,0.4,-0.6
-E08000017,Doncaster,17.4,21.2,3.8
-E06000059,Dorset,1.1,1.1,0
-E08000027,Dudley,3.7,2.2,-1.5
-E09000009,Ealing,4.1,6.7,2.6
-E06000011,East Riding of Yorkshire,14.1,4.7,-9.4
-E10000011,East Sussex,9,4.5,-4.5
-E09000010,Enfield,2.7,3.6,0.9
-E10000012,Essex,5.8,3.5,-2.3
-E08000037,Gateshead,3.5,0.5,-3
-E10000013,Gloucestershire,0.6,1,0.4
-E09000011,Greenwich,3.1,2.5,-0.6
-E09000012,Hackney,2.5,1.4,-1.1
-E06000006,Halton,6.2,6.2,0
-E09000013,Hammersmith and Fulham,5.9,12.4,6.5
-E10000014,Hampshire,1.2,0.4,-0.8
-E09000014,Haringey,2.6,3,0.4
-E09000015,Harrow,1.6,2.8,1.2
-E06000001,Hartlepool,4.3,6.4,2.1
-E09000016,Havering,1.9,5.4,3.5
-E06000019,"Herefordshire, County of",2.1,1.6,-0.5
-E10000015,Hertfordshire,4.6,2.4,-2.2
-E09000017,Hillingdon,2.6,5.9,3.3
-E09000018,Hounslow,7.4,9.2,1.8
-E06000046,Isle of Wight,2.8,2.1,-0.7
-E09000019,Islington,2.9,0.8,-2.1
-E09000020,Kensington and Chelsea,7.7,6.4,-1.3
-E10000016,Kent,13.5,10,-3.5
-E06000010,"Kingston upon Hull, City of",22.6,3.8,-18.8
-E09000021,Kingston upon Thames,1.1,1.7,0.6
-E08000034,Kirklees,30.3,26.2,-4.1
-E08000011,Knowsley,6,20.1,14.1
-E09000022,Lambeth,0.9,0.3,-0.6
-E10000017,Lancashire,15,7.4,-7.6
-E08000035,Leeds,19.8,11.7,-8.1
-E06000016,Leicester,140.2,141.3,1.1
-E10000018,Leicestershire,20.8,17.3,-3.5
-E09000023,Lewisham,2,1.7,-0.3
-E10000019,Lincolnshire,5.7,3,-2.7
-E08000012,Liverpool,6.3,7.7,1.4
-E06000032,Luton,26.6,15,-11.6
-E08000003,Manchester,21.6,17.5,-4.1
-E06000035,Medway,6.1,4.7,-1.4
-E09000024,Merton,4.4,5.8,1.4
-E06000002,Middlesbrough,7.8,6.4,-1.4
-E06000042,Milton Keynes,10.8,4.1,-6.7
-E08000021,Newcastle upon Tyne,5.3,3.7,-1.6
-E09000025,Newham,3.4,1.7,-1.7
-E10000020,Norfolk,4.3,1.6,-2.7
-E06000012,North East Lincolnshire,1.9,1.9,0
-E06000013,North Lincolnshire,4.7,3.5,-1.2
-E06000024,North Somerset,1.4,3.7,2.3
-E08000022,North Tyneside,4.9,2.9,-2
-E10000023,North Yorkshire,13.8,5,-8.8
-E10000021,Northamptonshire,14.8,9.9,-4.9
-E06000057,Northumberland,3.4,2.2,-1.2
-E06000018,Nottingham,10.6,8.5,-2.1
-E10000024,Nottinghamshire,12.6,5.4,-7.2
-E08000004,Oldham,38.6,30.1,-8.5
-E10000025,Oxfordshire,5.1,4.4,-0.7
-E06000031,Peterborough,27.9,18.9,-9
-E06000026,Plymouth,1.5,2.3,0.8
-E06000044,Portsmouth,0.9,0,-0.9
-E06000038,Reading,1.8,3.1,1.3
-E09000026,Redbridge,3.6,2.3,-1.3
-E06000003,Redcar and Cleveland,0.7,5.1,4.4
-E09000027,Richmond upon Thames,1,3.1,2.1
-E08000005,Rochdale,53.6,35,-18.6
-E08000018,Rotherham,33.6,26.1,-7.5
-E06000017,Rutland,2.5,0,-2.5
-E08000006,Salford,10.2,7.9,-2.3
-E08000028,Sandwell,7.3,5.5,-1.8
-E08000014,Sefton,8.3,4.7,-3.6
-E08000019,Sheffield,20.6,24.4,3.8
-E06000051,Shropshire,13.7,7.2,-6.5
-E06000039,Slough,13.4,8.7,-4.7
-E08000029,Solihull,4.7,6.5,1.8
-E10000027,Somerset,4.7,0.9,-3.8
-E06000025,South Gloucestershire,0.4,0.7,0.3
-E08000023,South Tyneside,0,0.7,0.7
-E06000045,Southampton,5.5,0.4,-5.1
-E06000033,Southend-on-Sea,20.8,8.2,-12.6
-E09000028,Southwark,3.5,1.6,-1.9
-E08000013,St. Helens,6.7,6.7,0
-E10000028,Staffordshire,9.4,7.9,-1.5
-E08000007,Stockport,12.3,6.5,-5.8
-E06000004,Stockton-on-Tees,14.7,5.6,-9.1
-E06000021,Stoke-on-Trent,18,14.1,-3.9
-E10000029,Suffolk,1.4,0.9,-0.5
-E08000024,Sunderland,1.8,1.8,0
-E10000030,Surrey,3.7,2.9,-0.8
-E09000029,Sutton,2,1.5,-0.5
-E06000030,Swindon,10.4,6.8,-3.6
-E08000008,Tameside,33.3,16.9,-16.4
-E06000020,Telford and Wrekin,8.4,5.1,-3.3
-E06000034,Thurrock,12.2,7,-5.2
-E06000027,Torbay,0.7,0,-0.7
-E09000030,Tower Hamlets,2.8,0.9,-1.9
-E08000009,Trafford,10.2,3.8,-6.4
-E08000036,Wakefield,18.6,9,-9.6
-E08000030,Walsall,4.6,3.2,-1.4
-E09000031,Waltham Forest,5.4,4.7,-0.7
-E09000032,Wandsworth,2.8,4,1.2
-E06000007,Warrington,9.1,5.7,-3.4
-E10000031,Warwickshire,10.3,5.6,-4.7
-E06000037,West Berkshire,0,1.3,1.3
-E10000032,West Sussex,3.3,2.9,-0.4
-E09000033,Westminster,5.1,4.7,-0.4
-E08000010,Wigan,5.5,4.6,-0.9
-E06000054,Wiltshire,1.2,1.4,0.2
-E06000040,Windsor and Maidenhead,2,0.7,-1.3
-E08000015,Wirral,19.2,8.3,-10.9
-E06000041,Wokingham,0.6,3,2.4
-E08000031,Wolverhampton,9.9,7.6,-2.3
-E10000034,Worcestershire,5.7,3.6,-2.1
-E06000014,York,6.7,1.9,-4.8
+E06000052,Cornwall and Isles of Scilly,1.4,0,-1.4
+E06000047,County Durham,4.5,1.9,-2.6
+E08000026,Coventry,1.4,3,1.6
+E09000008,Croydon,2.8,1.3,-1.5
+E10000006,Cumbria,3.6,5,1.4
+E06000005,Darlington,0.9,0.9,0
+E06000015,Derby,12.8,7.8,-5
+E10000007,Derbyshire,6.5,4,-2.5
+E10000008,Devon,0.4,0.5,0.1
+E08000017,Doncaster,21.2,11.9,-9.3
+E06000059,Dorset,1.1,0.8,-0.3
+E08000027,Dudley,2.2,2.5,0.3
+E09000009,Ealing,6.7,5,-1.7
+E06000011,East Riding of Yorkshire,4.7,3.2,-1.5
+E10000011,East Sussex,4.5,4.7,0.2
+E09000010,Enfield,3.6,3,-0.6
+E10000012,Essex,3.5,2.8,-0.7
+E08000037,Gateshead,0.5,1.5,1
+E10000013,Gloucestershire,1,2,1
+E09000011,Greenwich,2.5,1.8,-0.7
+E09000012,Hackney,1.4,4.3,2.9
+E06000006,Halton,6.2,4.7,-1.5
+E09000013,Hammersmith and Fulham,12.4,3.2,-9.2
+E10000014,Hampshire,0.4,1,0.6
+E09000014,Haringey,3,0.7,-2.3
+E09000015,Harrow,2.8,3.2,0.4
+E06000001,Hartlepool,6.4,2.1,-4.3
+E09000016,Havering,5.4,3.1,-2.3
+E06000019,"Herefordshire, County of",1.6,1.6,0
+E10000015,Hertfordshire,2.4,3.8,1.4
+E09000017,Hillingdon,5.9,8.2,2.3
+E09000018,Hounslow,9.2,4.1,-5.1
+E06000046,Isle of Wight,2.1,1.4,-0.7
+E09000019,Islington,0.8,2.9,2.1
+E09000020,Kensington and Chelsea,6.4,1.3,-5.1
+E10000016,Kent,10,8.2,-1.8
+E06000010,"Kingston upon Hull, City of",3.8,3.1,-0.7
+E09000021,Kingston upon Thames,1.7,2.3,0.6
+E08000034,Kirklees,26.2,29.9,3.7
+E08000011,Knowsley,20.1,11.4,-8.7
+E09000022,Lambeth,0.3,0.9,0.6
+E10000017,Lancashire,7.4,5,-2.4
+E08000035,Leeds,11.7,5.6,-6.1
+E06000016,Leicester,141.3,116,-25.3
+E10000018,Leicestershire,17.3,14.8,-2.5
+E09000023,Lewisham,1.7,1,-0.7
+E10000019,Lincolnshire,3,3.2,0.2
+E08000012,Liverpool,7.7,9.5,1.8
+E06000032,Luton,15,11.2,-3.8
+E08000003,Manchester,17.5,12.4,-5.1
+E06000035,Medway,4.7,5,0.3
+E09000024,Merton,5.8,1.9,-3.9
+E06000002,Middlesbrough,6.4,2.8,-3.6
+E06000042,Milton Keynes,4.1,1.9,-2.2
+E08000021,Newcastle upon Tyne,3.7,2,-1.7
+E09000025,Newham,1.7,3.7,2
+E10000020,Norfolk,1.6,0.9,-0.7
+E06000012,North East Lincolnshire,1.9,2.5,0.6
+E06000013,North Lincolnshire,3.5,3.5,0
+E06000024,North Somerset,3.7,0.9,-2.8
+E08000022,North Tyneside,2.9,1,-1.9
+E10000023,North Yorkshire,5,2.6,-2.4
+E10000021,Northamptonshire,9.9,9.5,-0.4
+E06000057,Northumberland,2.2,3.1,0.9
+E06000018,Nottingham,8.5,4.8,-3.7
+E10000024,Nottinghamshire,5.4,3.9,-1.5
+E08000004,Oldham,30.1,19.1,-11
+E10000025,Oxfordshire,4.4,3.9,-0.5
+E06000031,Peterborough,18.9,16.9,-2
+E06000026,Plymouth,2.3,3,0.7
+E06000044,Portsmouth,0,1.4,1.4
+E06000038,Reading,3.1,1.8,-1.3
+E09000026,Redbridge,2.3,4.9,2.6
+E06000003,Redcar and Cleveland,5.1,0.7,-4.4
+E09000027,Richmond upon Thames,3.1,1.5,-1.6
+E08000005,Rochdale,35,32.7,-2.3
+E08000018,Rotherham,26.1,21.5,-4.6
+E06000017,Rutland,0,5,5
+E08000006,Salford,7.9,7.9,0
+E08000028,Sandwell,5.5,3.4,-2.1
+E08000014,Sefton,4.7,4.7,0
+E08000019,Sheffield,24.4,14.8,-9.6
+E06000051,Shropshire,7.2,6.6,-0.6
+E06000039,Slough,8.7,8.1,-0.6
+E08000029,Solihull,6.5,3.7,-2.8
+E10000027,Somerset,0.9,0.9,0
+E06000025,South Gloucestershire,0.7,1.1,0.4
+E08000023,South Tyneside,0.7,0.7,0
+E06000045,Southampton,0.4,4.8,4.4
+E06000033,Southend-on-Sea,8.2,6.6,-1.6
+E09000028,Southwark,1.6,2.8,1.2
+E08000013,St. Helens,6.7,2.2,-4.5
+E10000028,Staffordshire,7.9,6.1,-1.8
+E08000007,Stockport,6.5,6.9,0.4
+E06000004,Stockton-on-Tees,5.6,4.6,-1
+E06000021,Stoke-on-Trent,14.1,11.3,-2.8
+E10000029,Suffolk,0.9,1.7,0.8
+E08000024,Sunderland,1.8,0.7,-1.1
+E10000030,Surrey,2.9,3.2,0.3
+E09000029,Sutton,1.5,1,-0.5
+E06000030,Swindon,6.8,3.1,-3.7
+E08000008,Tameside,16.9,13.8,-3.1
+E06000020,Telford and Wrekin,5.1,3.4,-1.7
+E06000034,Thurrock,7,3.5,-3.5
+E06000027,Torbay,0,3.7,3.7
+E09000030,Tower Hamlets,0.9,1.6,0.7
+E08000009,Trafford,3.8,6.4,2.6
+E08000036,Wakefield,9,10.1,1.1
+E08000030,Walsall,3.2,3.2,0
+E09000031,Waltham Forest,4.7,4,-0.7
+E09000032,Wandsworth,4,1.5,-2.5
+E06000007,Warrington,5.7,3.8,-1.9
+E10000031,Warwickshire,5.6,4,-1.6
+E06000037,West Berkshire,1.3,0.6,-0.7
+E10000032,West Sussex,2.9,1.5,-1.4
+E09000033,Westminster,4.7,2,-2.7
+E08000010,Wigan,4.6,1.8,-2.8
+E06000054,Wiltshire,1.4,1.6,0.2
+E06000040,Windsor and Maidenhead,0.7,0.7,0
+E08000015,Wirral,8.3,2.5,-5.8
+E06000041,Wokingham,3,1.8,-1.2
+E08000031,Wolverhampton,7.6,5,-2.6
+E10000034,Worcestershire,3.6,2.5,-1.1
+E06000014,York,1.9,3.3,1.4

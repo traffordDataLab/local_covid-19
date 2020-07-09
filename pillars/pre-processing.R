@@ -25,7 +25,7 @@ current_week <- read_xlsx(tmp, sheet = 10, skip = 7) %>%
 # previous weekly rate
 # change the URL!
 tmp <- tempfile(fileext = ".xlsx")
-GET(url = "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/896777/Weekly_COVID19_report_data_current.xlsx",
+GET(url = "https://assets.publishing.service.gov.uk/government/uploads/system/uploads/attachment_data/file/897200/Weekly_COVID19_report_data_w27.xlsx",
     write_disk(tmp))
 
 previous_week <- read_xlsx(tmp, sheet = 10, skip = 7) %>% 

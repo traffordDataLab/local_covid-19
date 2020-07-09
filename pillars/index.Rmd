@@ -25,8 +25,8 @@ utla <- st_read("https://opendata.arcgis.com/datasets/29827d4c079349888acd7db3f8
 # URL: https://www.gov.uk/government/publications/national-covid-19-surveillance-reports
 
 # check latest week period!
-current_week_dates <- "22-28 June"
-previous_week_dates <- "15-21 June"
+current_week_dates <- "29 June - 5 July"
+previous_week_dates <- "22-28 June"
 
 # Weekly rate of COVID-19 cases by UTLA for Pillar 1 and 2
 # Source: National COVID-19 surveillance reports, Public Health England
