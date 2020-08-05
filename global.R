@@ -21,7 +21,7 @@ phe <- read_csv("https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases
   mutate(`Specimen date` = as.Date(`Specimen date`, format = "%Y-%m-%d")) 
 
 cases <- phe %>% 
-  filter(`Area type` == "Lower tier local authority") %>%
+  filter(`Area type` == "ltla") %>%
   select(date = `Specimen date`,
          area_code = `Area code`,
          area_name = `Area name`,
