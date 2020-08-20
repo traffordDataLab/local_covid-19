@@ -154,7 +154,8 @@ shinyApp(ui, function(input,output){
             plot.title = element_text(size = 14, face = "bold"),
             plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
             plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10)),
-            legend.position = "top")
+            legend.position = "top", 
+            legend.justification = "left")
   )
   
  output$new_cases_plot <- renderGirafe({
@@ -332,7 +333,8 @@ shinyApp(ui, function(input,output){
            plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
            plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10)),
            axis.text.x = element_text(angle = 90),
-           legend.position = "top")
+           legend.position = "top", 
+           legend.justification = "left")
  )
  
  output$hospital_deaths_plot <- renderGirafe({
@@ -400,7 +402,8 @@ shinyApp(ui, function(input,output){
            plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
            plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10)),
            axis.text.x = element_text(angle = 90),
-           legend.position = "top")
+           legend.position = "top", 
+           legend.justification = "left")
  )
  
  output$care_home_deaths_plot <- renderGirafe({
