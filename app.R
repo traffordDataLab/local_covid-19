@@ -211,7 +211,7 @@ shinyApp(ui, function(input,output){
  })
  
  total_cases_selection <- reactive(
-   filter(cases, area_code %in% cipfa(), date >= max(date) - days(7)) %>% 
+   filter(cases, area_code %in% cipfa(), date >= max(date) - days(6)) %>% 
      group_by(area_name) %>% 
      summarise(cum_cases = max(cum_cases),
                cum_rate = max(cum_rate),
