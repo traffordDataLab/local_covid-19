@@ -211,7 +211,7 @@ shinyApp(ui, function(input,output){
  })
  
  total_cases_selection <- reactive(
-   filter(cases, area_code %in% cipfa(), date >= max(date) - days(6)) %>% 
+   filter(cases, area_code %in% cipfa(), date >= max(date)-days(8) & date <= max(date)-days(2)) %>% 
      group_by(area_name) %>% 
      summarise(cum_cases = max(cum_cases),
                cum_rate = max(cum_rate),
@@ -285,7 +285,7 @@ shinyApp(ui, function(input,output){
    
   div(style = "text-align: center; margin: 8px 0; font-size: 16px;",
        div(style = "font-size: 16px; font-weight: 600;", 
-           paste("Cumulative confirmed cases,", format(max(cases$date), '%d %B %Y'))),
+           paste("Cumulative confirmed cases,", format(max(cases$date)-days(2), '%d %B %Y'))),
        paste(input$ltla , "compared with similar local authorities")
    )
   
