@@ -103,22 +103,31 @@ shinyApp(ui, function(input,output){
   
   output$summary_text <- renderUI({ 
     req(input$ltla)
-    latest_date_cases <- max(cases$date)
-    cumulative_cases <- pull(filter(cases, area_name == input$ltla, date == max(date)), cum_cases)
-    resident_population <- pull(filter(ltla, area_name == input$ltla),population)
-    infection_rate <- cumulative_cases/resident_population*100000
     
-    england_cumulative_cases <- pull(filter(phe, `Area name` == "England", `Specimen date` == max(`Specimen date`)),`Cumulative lab-confirmed cases`)
-    england_resident_population <- sum(ltla$population, na.rm = TRUE)
-    england_infection_rate <- england_cumulative_cases/england_resident_population*100000
+    summary_stats <- cases %>% 
+      filter(area_name == input$ltla) %>% 
+      mutate(period = case_when(
+        date >= max(date)-days(8) & date <= max(date)-days(2) ~ "current_week",
+        date >= max(date)-days(15) & date <= max(date)-days(9) ~ "previous_week"
+      )) %>% 
+      filter(!is.na(period)) %>% 
+      select(-date) %>%
+      group_by(area_code, area_name, period, population) %>% 
+      summarise(total_cases = sum(new_cases)) %>% 
+      pivot_wider(names_from = period, values_from = total_cases) %>% 
+      select(area_code, area_name, population, previous_week, current_week) %>% 
+      mutate(previous_week_rate = round(previous_week/population*100000,1),
+             current_week_rate = round(current_week/population*100000,1),
+             change = current_week-previous_week) %>% 
+      ungroup() 
     
     latest_date_deaths <- max(deaths$date)
     covid19_deaths <- filter(deaths, area_name == input$ltla, cause_of_death == "COVID-19") %>% 
       summarise(number_of_deaths = sum(number_of_deaths, na.rm = TRUE)) %>% pull()
     
     
-    HTML(paste0("<br/><p>As of <strong>", format(latest_date_cases, '%A %d %B %Y'), "</strong>, the total number of confirmed cases of COVID-19 in <strong>", input$ltla, "</strong> was <strong>", 
-         comma(cumulative_cases), "</strong>, a rate of <strong> ", round(infection_rate,1), "</strong> cases per 100,000 people. The infection rate in England is <strong>", round(england_infection_rate,1), "</strong> for every 100,000.</p>
+    HTML(paste0("<br/><strong>", comma(summary_stats$current_week), "</strong> confirmed cases of coronavirus were reported in <strong>", input$ltla, "</strong> during the week ending <strong>", 
+                format(max(cases$date)-days(2), '%A %d %B'), "</strong> compared with <strong>", comma(summary_stats$previous_week), "</strong> cases reported during the previous week. This represents a difference of <strong>", comma(summary_stats$change), "</strong> cases.</p>
          <p>There have been a total of <strong>", covid19_deaths, "</strong> coronavirus-related deaths registered in <strong>", input$ltla, "</strong> up to the week ending <strong>", format(latest_date_deaths, '%d %B %Y'), "</strong>. </p>")) 
   })
   
