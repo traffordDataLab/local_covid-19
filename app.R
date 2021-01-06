@@ -1,5 +1,5 @@
 library(shiny) 
-library(bootstraplib) 
+library(bslib) 
 library(tidyverse) 
 library(fingertipsR)
 library(zoo) 
@@ -12,14 +12,14 @@ library(lubridate)
 source("global.R")
 
 # set Sass variables
-bs_theme_new(version = "4+3", bootswatch = NULL)
-bs_theme_add_variables(
+bs_global_theme(version = "4", bootswatch = NULL)
+my_theme <- bs_theme(
   "primary" = "#969696",
   "secondary" = "#bdbdbd",
   "body-color" = "#212121",
-  "input-border-color" = "#202528",
-  "font-family-sans-serif" = "Open Sans, sans-serif"
+  "input-border-color" = "#202528"
 )
+
 
 # downloadButton() without icon
 download_button <- function(outputId, label = "Download"){
@@ -28,7 +28,7 @@ download_button <- function(outputId, label = "Download"){
 }
 
 ui <- bootstrapPage(
-  bootstrap(),
+  theme = my_theme,
   includeCSS("styles.css"),
   titlePanel(
     div(
@@ -148,7 +148,7 @@ shinyApp(ui, function(input,output){
                fill = ifelse(new_cases_selection()$date >= max(new_cases_selection()$date)-4, "#bdbdbd", "#39809E"), alpha = 0.6) +
       geom_line_interactive(data = new_cases_selection(), aes(x = date, y = ma_cases, tooltip = "7 day rolling average", colour = "ma_cases"), size = 1) +
       scale_colour_manual(values = c("ma_cases" = "#39809E"), name = NULL, labels = "7-day rolling average") +
-      scale_x_date(expand = c(0.005, 0.005), date_labels = "%d-%b") +
+      scale_x_date(breaks = c(min(new_cases_selection()$date), max(new_cases_selection()$date)), date_labels = "%d-%b") +
       scale_y_continuous(expand = c(0.005, 0.005), breaks = function(x) unique(
         floor(pretty(seq(0, (max(x) + 1) * 1.1)))), position = "right") +
       labs(x = NULL, y = NULL, 
@@ -164,7 +164,8 @@ shinyApp(ui, function(input,output){
             plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
             plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10)),
             legend.position = "top", 
-            legend.justification = "left")
+            legend.justification = "left",
+            axis.ticks.x = element_line(colour = 'black', size = 0.5))
   )
   
  output$new_cases_plot <- renderGirafe({
@@ -223,9 +224,9 @@ shinyApp(ui, function(input,output){
    filter(cases, area_code %in% cipfa(), date >= max(date)-days(8) & date <= max(date)-days(2)) %>% 
      group_by(area_name) %>% 
      summarise(cum_cases = max(cum_cases),
-               cum_rate = max(cum_rate),
+               cum_rate = round(max(cum_rate),0),
                recent_cases = sum(new_cases),
-               recent_rate = round(recent_cases/population*100000,1)) %>% 
+               recent_rate = round(recent_cases/population*100000,0)) %>% 
      distinct(area_name, .keep_all = TRUE)
  )
  
@@ -262,11 +263,13 @@ shinyApp(ui, function(input,output){
                                   format = colFormat(separators = TRUE),
                                   align = "left"),
                cum_rate = colDef(name = "Per 100,000",
+                                 format = colFormat(separators = TRUE),
                                  align = "left"),
                recent_cases = colDef(name = "Cases",
                                      format = colFormat(separators = TRUE),
                                      align = "left"),
                recent_rate = colDef(name = "Per 100,000",
+                                    format = colFormat(separators = TRUE),
                                     align = "left")
              ),
              columnGroups = list(
@@ -322,10 +325,11 @@ shinyApp(ui, function(input,output){
  )
 
  hospital_deaths_plot <- reactive(
-   ggplot(hospital_deaths_selection(), aes(x = factor(date), y = number_of_deaths)) +
+   ggplot(hospital_deaths_selection(), aes(x = date, y = number_of_deaths)) +
      geom_col_interactive(aes(fill = fct_rev(cause_of_death), tooltip = tooltip)) +
      geom_hline(yintercept = 0, size = 0.3, colour = "#333333") +
      scale_fill_manual(values = c("COVID-19" = "#8D2313", "Other causes" = "#d4ada7"), guide = guide_legend(reverse = TRUE)) +
+     scale_x_date(date_breaks = "1 month", date_labels = "%b") +
      scale_y_continuous(expand = c(0.005, 0.005), position = "right") +
      labs(x = NULL, y = NULL, 
           title = "Weekly registered deaths in hospital",
@@ -391,10 +395,11 @@ shinyApp(ui, function(input,output){
  )
  
  care_home_deaths_plot <- reactive(
-   ggplot(care_home_deaths_selection(), aes(x = factor(date), y = number_of_deaths)) +
+   ggplot(care_home_deaths_selection(), aes(x = date, y = number_of_deaths)) +
      geom_col_interactive(aes(fill = fct_rev(cause_of_death), tooltip = tooltip)) +
      geom_hline(yintercept = 0, size = 0.3, colour = "#333333") +
      scale_fill_manual(values = c("COVID-19" = "#8D2313", "Other causes" = "#d4ada7"), guide = guide_legend(reverse = TRUE)) +
+     scale_x_date(date_breaks = "1 month", date_labels = "%b") +
      scale_y_continuous(expand = c(0.005, 0.005), position = "right") +
      labs(x = NULL, y = NULL, 
           title = "Weekly registered deaths in care homes",
