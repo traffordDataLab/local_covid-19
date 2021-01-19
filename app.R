@@ -329,7 +329,7 @@ shinyApp(ui, function(input,output){
      geom_col_interactive(aes(fill = fct_rev(cause_of_death), tooltip = tooltip)) +
      geom_hline(yintercept = 0, size = 0.3, colour = "#333333") +
      scale_fill_manual(values = c("COVID-19" = "#8D2313", "Other causes" = "#d4ada7"), guide = guide_legend(reverse = TRUE)) +
-     scale_x_date(date_breaks = "1 month", date_labels = "%b") +
+     scale_x_date(date_breaks = "1 month", date_labels = "%b %y") +
      scale_y_continuous(expand = c(0.005, 0.005), position = "right") +
      labs(x = NULL, y = NULL, 
           title = "Weekly registered deaths in hospital",
@@ -399,7 +399,7 @@ shinyApp(ui, function(input,output){
      geom_col_interactive(aes(fill = fct_rev(cause_of_death), tooltip = tooltip)) +
      geom_hline(yintercept = 0, size = 0.3, colour = "#333333") +
      scale_fill_manual(values = c("COVID-19" = "#8D2313", "Other causes" = "#d4ada7"), guide = guide_legend(reverse = TRUE)) +
-     scale_x_date(date_breaks = "1 month", date_labels = "%b") +
+     scale_x_date(date_breaks = "1 month", date_labels = "%b %y") +
      scale_y_continuous(expand = c(0.005, 0.005), position = "right") +
      labs(x = NULL, y = NULL, 
           title = "Weekly registered deaths in care homes",

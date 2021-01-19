@@ -40,18 +40,35 @@ left_join(ltla, population, by = "area_code") %>%
 # Source: Office for National Statistics
 # URL: https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard
 
+# 2021
 tmp <- tempfile(fileext = ".xlsx")
-
 ext <- read_html("https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard") %>% 
   html_nodes("a") %>%
   html_attr("href") %>%
   str_subset("\\.xlsx") %>% 
   .[[1]]
-
 GET(url = paste0("https://www.ons.gov.uk", ext),
     write_disk(tmp))
 
-read_xlsx(tmp, sheet = 4, skip = 3) %>%
+deaths_2021 <- read_xlsx(tmp, sheet = 4, skip = 3) %>%
+  clean_names() %>%
+  pivot_wider(names_from = cause_of_death, values_from = number_of_deaths) %>% 
+  rename(`COVID-19` = `COVID 19`) %>% 
+  mutate(area_code = case_when(as.character(area_code) %in% c("E06000052", "E06000053") ~ "E06000052", TRUE ~ area_code),
+         area_name = case_when(area_code == "E06000052" ~ "Cornwall and Isles of Scilly", TRUE ~ area_name),
+         date = ymd("2021-01-01") + weeks(week_number),
+         `Other causes` = `All causes`-`COVID-19`) %>% 
+  group_by(area_code, area_name, date, week_number, place_of_death) %>% 
+  summarise(`COVID-19` = sum(`COVID-19`),
+            `Other causes` = sum(`Other causes`)) %>% 
+  pivot_longer(-c(area_code, area_name, week_number, date, place_of_death), names_to = "cause_of_death", values_to = "number_of_deaths") 
+
+# 2020
+tmp <- tempfile(fileext = ".xlsx")
+GET(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fhealthandsocialcare%2fcausesofdeath%2fdatasets%2fdeathregistrationsandoccurrencesbylocalauthorityandhealthboard%2f2020/lahbtablesweek01to532020.xlsx",
+    write_disk(tmp))
+
+deaths_2020 <- read_xlsx(tmp, sheet = 4, skip = 3) %>%
   clean_names() %>% 
   pivot_wider(names_from = cause_of_death, values_from = number_of_deaths) %>% 
   rename(`COVID-19` = `COVID 19`) %>% 
@@ -62,5 +79,7 @@ read_xlsx(tmp, sheet = 4, skip = 3) %>%
   group_by(area_code, area_name, date, week_number, place_of_death) %>% 
   summarise(`COVID-19` = sum(`COVID-19`),
             `Other causes` = sum(`Other causes`)) %>% 
-  pivot_longer(-c(area_code, area_name, week_number, date, place_of_death), names_to = "cause_of_death", values_to = "number_of_deaths") %>%
+  pivot_longer(-c(area_code, area_name, week_number, date, place_of_death), names_to = "cause_of_death", values_to = "number_of_deaths")   
+  
+bind_rows(deaths_2020, deaths_2021) %>% 
   write_csv("deaths.csv")
