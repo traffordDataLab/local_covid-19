@@ -17,15 +17,15 @@ ltla <- read_csv("data/ltla.csv")
 # Source: Public Health England
 # URL: https://coronavirus.data.gov.uk
 
-phe <- read_csv("https://coronavirus.data.gov.uk/downloads/csv/coronavirus-cases_latest.csv") %>% 
-  mutate(`Specimen date` = as.Date(`Specimen date`, format = "%Y-%m-%d")) 
+phe <- read_csv("https://api.coronavirus.data.gov.uk/v2/data?areaType=ltla&metric=newCasesByPublishDate&metric=newCasesBySpecimenDate&format=csv") %>% 
+  mutate(`date` = as.Date(`date`, format = "%Y-%m-%d")) 
 
 cases <- phe %>% 
-  filter(`Area type` == "ltla") %>%
-  select(date = `Specimen date`,
-         area_code = `Area code`,
-         area_name = `Area name`,
-         new_cases = `Daily lab-confirmed cases`) %>% 
+  filter(`areaType` == "ltla") %>%
+  select(date,
+         area_code = `areaCode`,
+         area_name = `areaName`,
+         new_cases = `newCasesBySpecimenDate`) %>% 
   arrange(date) %>% 
   group_by(area_code, area_name) %>%
   complete(date = seq.Date(min(date), max(date), by = "day")) %>% 

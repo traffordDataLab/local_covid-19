@@ -1,7 +1,7 @@
 library(shiny) 
 library(bslib) 
 library(tidyverse) 
-library(fingertipsR)
+library(jsonlite)
 library(zoo) 
 library(scales) 
 library(shinyWidgets)
@@ -211,10 +211,9 @@ shinyApp(ui, function(input,output){
  
  cipfa <- reactive({
    req(input$ltla)
-   tryCatch(c(nearest_neighbours(AreaCode = pull(filter(ltla, area_name == input$ltla), area_code), 
-                                        AreaTypeID = 101, 
-                                        measure = "CIPFA"), 
-                     pull(filter(ltla, area_name == input$ltla), area_code)),
+   tryCatch(c(fromJSON(paste0("https://fingertips.phe.org.uk/api/areas/by_parent_area_code?area_type_id=101&parent_area_code=nn-1-", pull(filter(ltla, area_name == input$ltla), area_code)), flatten = TRUE) %>%
+                pull(Code),
+              pull(filter(ltla, area_name == input$ltla), area_code)),
             error = function(cond) { return(NULL) },
             warning = function(cond) { return(NULL) },
             finally = NA)
@@ -233,7 +232,7 @@ shinyApp(ui, function(input,output){
  output$total_cases_table <- renderReactable({
    req(input$ltla)
    
-   validate(
+   shiny::validate(
      need(try(!is.null(cipfa())), "Please refer to the summary page for the total number of cases")
    )
    
@@ -246,7 +245,7 @@ shinyApp(ui, function(input,output){
    
    reactable(class = "table",
              total_cases_selection(),
-             height = 500,
+             height = 600,
              pagination = FALSE,
              wrap = FALSE,
              defaultColGroup = colGroup(headerClass = "group-header", align = "left"),
