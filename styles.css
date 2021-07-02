@@ -1,55 +1,99 @@
-@import url('https://fonts.googleapis.com/css?family=Open+Sans');
+@import url('https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto');
 
-@font-face {
-  font-family: 'Open Sans', sans-serif;
+html, body
+{
+    font-family: 'Open Sans', sans-serif;
+    color: #212121;
 }
 
-text {
-  font-family: 'Open Sans', sans-serif;
+/* HTML5 fallback styles for older browsers */
+main, section, header, footer, nav, figure, figcaption
+{
+    display: block;
+    box-sizing: border-box;
+}
+/* ---------------------------------------- */
+
+h1, h2, h3, h4, h5, h6, .control-label
+{
+    font-family: 'Roboto', sans-serif;
+    color: #707070;
 }
 
-div {
-  font-family: 'Open Sans', sans-serif;
-}
-
-h1, h2, h3, h4, h5, h6, .header {
-  font-family: 'Open Sans', sans-serif;
-  color: #212121;
-}
-
-/* Hide underline on logo on hover */
-.headerContainer a:hover {
-  text-decoration: none;
-}
-
-/* Centre tabsetPanel pills */
-.nav-pills {
+h1
+{
   display: flex;
   justify-content: center;
 }
 
-/* Centre fluidRow content */
-.row {
-  display: flex;
-  justify-content: center;
+main
+{
+  margin-top: 1em;
+}
+
+a, a:hover, a:focus, a:visited, .themeLink
+{
+    color: #046dc3;
+}
+
+a
+{
+    text-decoration: none;
+}
+
+a:hover
+{
+    text-decoration: underline;
+}
+
+img
+{
+    border: 0;
+}
+
+.traffordDataLabLogo
+{
+    margin: 0.5em;
+}
+
+/* Centre tabsetPanel pills and fluidRow content */
+.nav-pills, .row
+{
+    display: flex;
+    justify-content: center;
+}
+
+/* background-colour set using SASS variables in app.R */
+.bg-secondary
+{
+    padding-top: 1em;
+    border-bottom: 1px solid #ccc;
+    box-shadow: 0 0 5px #f0f0f0;
+}
+
+.control-label
+{
+    font-weight: bold;
+    margin-bottom: 0;
 }
 
 /* Table */
 .table {
   margin: 0 auto;
   width: 600px;
-  font-family: sans-serif;
+  font-family: 'Open Sans', sans-serif;
   font-size: 13px;
   line-height: 16px;
 }
 
-.header .group-header {
+.group-header {
   font-size: 14px;
 }
 
 .value-highlight {
   font-weight: bold;
-  color: #39809E;
+  color: #fff;
+  background-color: #5d77a3;
 }
 
 /* Error message*/

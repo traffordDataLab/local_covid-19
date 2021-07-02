@@ -12,12 +12,19 @@ library(lubridate)
 source("global.R")
 
 # set Sass variables
+#bs_global_theme(version = "4", bootswatch = NULL)
+#my_theme <- bs_theme(
+#  "primary" = "#969696",
+#  "secondary" = "#bdbdbd",
+#  "body-color" = "#212121",
+#  "input-border-color" = "#202528"
+#)
 bs_global_theme(version = "4", bootswatch = NULL)
 my_theme <- bs_theme(
-  "primary" = "#969696",
-  "secondary" = "#bdbdbd",
+  "primary" = "#5d77a3",
+  "secondary" = "#f5f9ff",
   "body-color" = "#212121",
-  "input-border-color" = "#202528"
+  "input-border-color" = "#5d77a3;"
 )
 
 
@@ -28,28 +35,21 @@ download_button <- function(outputId, label = "Download"){
 }
 
 ui <- bootstrapPage(
+  title = "Local COVID-19",
   theme = my_theme,
-  includeCSS("styles.css"),
-  titlePanel(
-    div(
-      class = "headerContainer",
-      a(
-        img(
-          src = "https://www.trafforddatalab.io/assets/logo/trafforddatalab_logo.svg",
-          style = "position: relative; top: -3px; margin-left:10px; padding-top:10px; padding-right:10px;",
-          height = 40
-        ),
-        href = "https://www.trafforddatalab.io",
-        target = "_blank"
-      )),
-    windowTitle = "Local COVID-19"
-  ),
-  h1(class = "text-center mt-2", style = "display: flex; justify-content: center;", "Local COVID-19"),
+  # set the language of the page - important for accessibility
+  tags$html(lang = "en-GB"),
+  # put the CSS in the head section rather than in the body - for HTML5 conformity
+  tags$head(includeCSS("styles.css")),
+  tags$head(HTML('<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>')),
+  HTML('<header><a href="https://www.trafforddatalab.io" aria-label="Return to Trafford Data Lab home page"><img src="https://www.trafforddatalab.io/assets/logo/trafforddatalab_logo.svg" alt="Trafford Data Lab" width="93" class="traffordDataLabLogo"/></a>'),
+  h1(class = "text-center mt-2", "Local COVID-19"),
+  HTML('</header><main>'),
   div(class = "container-fluid",
       fluidRow(
         selectInput(inputId = "ltla",
-                           label = NULL,
-                           choices = c("Select a local authority" = '', sort(unique(ltla$area_name)))))),
+                    label = "Local Authority:",
+                    choices = c("Please make a selection" = '', sort(unique(ltla$area_name)))))),
   br(),
   tabsetPanel(type = "pills",
               tabPanel("Summary",
@@ -91,10 +91,201 @@ ui <- bootstrapPage(
                          uiOutput("care_home_deaths_ui"),
                          br(),
                          girafeOutput("care_home_deaths_plot", width = "100%"),
-                       )))
-              ))
+                         )))
+  ),
+  HTML("</main>
+        <script>
+          // Add label to the hidden select element for the LA choice
+          var cb_selectLabel = setInterval(function() {
+              try {
+                  var label = document.getElementsByClassName('control-label')[0];
+                  label.id = 'a11y-la-selection';
+                  
+                  var select = document.getElementById('ltla');
+                  select.setAttribute('aria-labelledby', 'a11y-la-selection');
+                  
+                  clearInterval(cb_selectLabel); // cancel further calls to this fn
+              }
+              catch(e) {
+                  // do nothing, wait until function is called again next interval
+              }
+          }, 500);
+          
+          
+          // Listener for events raised due to changing the LA value in the selection
+          $(document).on('shiny:value', function(event) {
+            var la = document.getElementById('ltla').value;
+          
+            if (event.target.id === 'new_cases_ui' && la !== '' && la !== null) {
+            
+              // Add aria-label to new cases info button to describe its function for accessibility
+              var cb_newCasesInfo = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('newCasesInfo');
+                      btn.setAttribute('aria-label', 'Display pop-up information about the new cases data.');
+                      clearInterval(cb_newCasesInfo); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+              // Add aria-label to new cases download plot button to describe its function for accessibility
+              var cb_newCasesDownloadPlot = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('newCasesDownloadPlot');
+                      btn.setAttribute('aria-label', 'Display popup containing a button to download the new cases plot.');
+                      clearInterval(cb_newCasesDownloadPlot); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+              // Add aria-label to new cases download data button to describe its function for accessibility
+              var cb_newCasesDownloadData = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('newCasesDownloadData');
+                      btn.setAttribute('aria-label', 'Display popup containing a button to download the new cases data.');
+                      clearInterval(cb_newCasesDownloadData); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+            }
+            
+            if (event.target.id === 'total_cases_ui' && la !== '' && la !== null) {
+            
+              // Add aria-label to total cases info button to describe its function for accessibility
+              var cb_totalCasesInfo = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('totalCasesInfo');
+                      btn.setAttribute('aria-label', 'Display pop-up information about the total cases data.');
+                      clearInterval(cb_totalCasesInfo); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+              // Add aria-label to total cases download data button to describe its function for accessibility
+              var cb_totalCasesDownloadData = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('totalCasesDownloadData');
+                      btn.setAttribute('aria-label', 'Display popup containing a button to download the total cases data displayed in the table.');
+                      clearInterval(cb_totalCasesDownloadData); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+            }
+            
+            if (event.target.id === 'hospital_deaths_ui' && la !== '' && la !== null) {
+            
+              // Add aria-label to hospital deaths info button to describe its function for accessibility
+              var cb_hospitalDeathsInfo = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('hospitalDeathsInfo');
+                      btn.setAttribute('aria-label', 'Display pop-up information about the hospital deaths data displayed in the plot.');
+                      clearInterval(cb_hospitalDeathsInfo); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+              // Add aria-label to hospital deaths download plot button to describe its function for accessibility
+              var cb_hospitalDeathsDownloadPlot = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('hospitalDeathsDownloadPlot');
+                      btn.setAttribute('aria-label', 'Display popup containing a button to download the hospital deaths plot.');
+                      clearInterval(cb_hospitalDeathsDownloadPlot); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+              // Add aria-label to hospital deaths download data button to describe its function for accessibility
+              var cb_hospitalDeathsDownloadData = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('hospitalDeathsDownloadData');
+                      btn.setAttribute('aria-label', 'Display popup containing a button to download the hospital deaths data.');
+                      clearInterval(cb_hospitalDeathsDownloadData); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+            }
+            
+            if (event.target.id === 'care_home_deaths_ui' && la !== '' && la !== null) {
+            
+              // Add aria-label to care home deaths info button to describe its function for accessibility
+              var cb_careHomeDeathsInfo = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('careHomeDeathsInfo');
+                      btn.setAttribute('aria-label', 'Display pop-up information about the care home deaths data displayed in the plot.');
+                      clearInterval(cb_careHomeDeathsInfo); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+              // Add aria-label to care home deaths download plot button to describe its function for accessibility
+              var cb_careHomeDeathsDownloadPlot = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('careHomeDeathsDownloadPlot');
+                      btn.setAttribute('aria-label', 'Display popup containing a button to download the care home deaths plot.');
+                      clearInterval(cb_careHomeDeathsDownloadPlot); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+              // Add aria-label to care home deaths download data button to describe its function for accessibility
+              var cb_careHomeDeathsDownloadData = setInterval(function() {
+                  try {
+                      var btn = document.getElementById('careHomeDeathsDownloadData');
+                      btn.setAttribute('aria-label', 'Display popup containing a button to download the care home deaths data.');
+                      clearInterval(cb_careHomeDeathsDownloadData); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+            }
+            
+          });
+          
+             
+          // *** NOT IMPLEMENTED YET ***       
+          // Add ARIA attributes to inform users when the plots and tables change content.
+          // Need setInterval as the elements may not have been added to the DOM yet.
+          /*var ariaCallback = setInterval(updateShinyAria, 500);
+                            
+          function updateShinyAria() {
+            var arrShinyContainers = document.getElementsByClassName('shiny-bound-output');
+  
+            if (arrShinyContainers.length > 0) {
+              for (var i = 0; i < arrShinyContainers.length; i++) {
+                arrShinyContainers[i].setAttribute('aria-live', 'polite');
+              }
+                                
+              clearInterval(ariaCallback);  // cancel the callback as we have added the attributes
+            }
+          }*/
+        </script>"))
 
-shinyApp(ui, function(input,output){
+shinyApp(ui, function(input,output,session){
   
   
   # -------------------------------------------
@@ -182,11 +373,11 @@ shinyApp(ui, function(input,output){
    req(input$ltla)
    div(
      div(style = "position: absolute; right: 8.5em; top: 0em;",
-         dropdown(includeMarkdown("data/metadata/new_cases.md"), icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
+         dropdown(includeMarkdown("data/metadata/new_cases.md"), inputId = "newCasesInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
      div(style = "position: absolute; right: 5em; top: 0em;",
-         dropdown(download_button("download_new_cases_plot", label = "Download plot"), icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
+         dropdown(download_button("download_new_cases_plot", label = "Download plot"), inputId = "newCasesDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
      div(style = "position: absolute; right: 1.5em; top: 0em;",
-         dropdown(download_button("download_new_cases_data", label = "Get the data"), icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
+         dropdown(download_button("download_new_cases_data", label = "Get the data"), inputId = "newCasesDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
      )
  })
@@ -240,7 +431,7 @@ shinyApp(ui, function(input,output){
      span(style = "text-decoration: underline; text-decoration-style: dotted;", title = tooltip, value)
    }
    
-   sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
+   sticky_style <- list(position = "sticky", left = 0, zIndex = 1,
                         borderRight = "1px solid #eee")
    
    reactable(class = "table",
@@ -283,9 +474,9 @@ shinyApp(ui, function(input,output){
    
    div(
      div(style = "position: absolute; right: 8.5em; top: 0em;",
-         dropdown(includeMarkdown("data/metadata/total_cases.md"), icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
+         dropdown(includeMarkdown("data/metadata/total_cases.md"), inputId = "totalCasesInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
      div(style = "position: absolute; right: 5em; top: 0em;",
-         dropdown(download_button("download_total_cases_data", label = "Get the data"), icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
+         dropdown(download_button("download_total_cases_data", label = "Get the data"), inputId = "totalCasesDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
    )
    
@@ -363,11 +554,11 @@ shinyApp(ui, function(input,output){
    req(input$ltla)
    div(
      div(style = "position: absolute; right: 8.5em; top: 0em;",
-         dropdown(includeMarkdown("data/metadata/hospital_deaths.md"), icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
+         dropdown(includeMarkdown("data/metadata/hospital_deaths.md"), inputId = "hospitalDeathsInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
      div(style = "position: absolute; right: 5em; top: 0em;",
-         dropdown(download_button("download_hospital_deaths_plot", label = "Download plot"), icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
+         dropdown(download_button("download_hospital_deaths_plot", label = "Download plot"), inputId = "hospitalDeathsDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
      div(style = "position: absolute; right: 1.5em; top: 0em;",
-         dropdown(download_button("download_hospital_deaths_data", label = "Get the data"), icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
+         dropdown(download_button("download_hospital_deaths_data", label = "Get the data"), inputId = "hospitalDeathsDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
      )
  })
@@ -433,11 +624,11 @@ shinyApp(ui, function(input,output){
    req(input$ltla)
    div(
      div(style = "position: absolute; right: 8.5em; top: 0em;",
-         dropdown(includeMarkdown("data/metadata/care_home_deaths.md"), icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
+         dropdown(includeMarkdown("data/metadata/care_home_deaths.md"), inputId = "careHomeDeathsInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
      div(style = "position: absolute; right: 5em; top: 0em;",
-         dropdown(download_button("download_care_home_deaths_plot", label = "Download plot"), icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
+         dropdown(download_button("download_care_home_deaths_plot", label = "Download plot"), inputId = "careHomeDeathsDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
      div(style = "position: absolute; right: 1.5em; top: 0em;",
-         dropdown(download_button("download_care_home_deaths_data", label = "Get the data"), icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
+         dropdown(download_button("download_care_home_deaths_data", label = "Get the data"), inputId = "careHomeDeathsDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
      )
  })
