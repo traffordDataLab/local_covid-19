@@ -20,15 +20,15 @@ h1, h2, h3, h4, h5, h6, .control-label
     color: #707070;
 }
 
-h1
+h1, .nav-pills, .row
 {
-  display: flex;
-  justify-content: center;
+    display: flex;
+    justify-content: center;
 }
 
 main
 {
-  margin-top: 1em;
+    margin-top: 1em;
 }
 
 a, a:hover, a:focus, a:visited, .themeLink
@@ -46,6 +46,11 @@ a:hover
     text-decoration: underline;
 }
 
+.nav-pills a
+{
+    color: #5d77a3;
+}
+
 img
 {
     border: 0;
@@ -54,13 +59,6 @@ img
 .traffordDataLabLogo
 {
     margin: 0.5em;
-}
-
-/* Centre tabsetPanel pills and fluidRow content */
-.nav-pills, .row
-{
-    display: flex;
-    justify-content: center;
 }
 
 /* background-colour set using SASS variables in app.R */
@@ -79,24 +77,23 @@ img
 
 /* Table */
 .table {
-  margin: 0 auto;
-  width: 600px;
-  font-family: 'Open Sans', sans-serif;
-  font-size: 13px;
-  line-height: 16px;
+    margin: 0 auto;
+    width: 600px;
+    font-family: 'Open Sans', sans-serif;
+    font-size: 13px;
+    line-height: 16px;
 }
 
 .group-header {
-  font-size: 14px;
+    font-size: 14px;
 }
 
 .value-highlight {
-  font-weight: bold;
-  color: #fff;
-  background-color: #5d77a3;
+    font-weight: bold;
+    color: #5d77a3;
 }
 
 /* Error message*/
 .shiny-output-error-validation {
-  font-weight: bold;
+    font-weight: bold;
 }
