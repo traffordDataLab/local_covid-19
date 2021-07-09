@@ -12,13 +12,6 @@ library(lubridate)
 source("global.R")
 
 # set Sass variables
-#bs_global_theme(version = "4", bootswatch = NULL)
-#my_theme <- bs_theme(
-#  "primary" = "#969696",
-#  "secondary" = "#bdbdbd",
-#  "body-color" = "#212121",
-#  "input-border-color" = "#202528"
-#)
 bs_global_theme(version = "4", bootswatch = NULL)
 my_theme <- bs_theme(
   "primary" = "#5d77a3",
@@ -37,61 +30,67 @@ download_button <- function(outputId, label = "Download"){
 ui <- bootstrapPage(
   title = "Local COVID-19",
   theme = my_theme,
-  # set the language of the page - important for accessibility
-  tags$html(lang = "en-GB"),
+  lang = "en-GB", # set the language of the page - important for accessibility
   # put the CSS in the head section rather than in the body - for HTML5 conformity
   tags$head(includeCSS("styles.css")),
-  tags$head(HTML('<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>')),
-  HTML('<header><a href="https://www.trafforddatalab.io" aria-label="Return to Trafford Data Lab home page"><img src="https://www.trafforddatalab.io/assets/logo/trafforddatalab_logo.svg" alt="Trafford Data Lab" width="93" class="traffordDataLabLogo"/></a>'),
-  h1(class = "text-center mt-2", "Local COVID-19"),
-  HTML('</header><main>'),
-  div(class = "container-fluid",
-      fluidRow(
-        selectInput(inputId = "ltla",
-                    label = "Local Authority:",
-                    choices = c("Please make a selection" = '', sort(unique(ltla$area_name)))))),
-  br(),
+  HTML('<header>
+          <a href="https://www.trafforddatalab.io" aria-label="Return to Trafford Data Lab home page"><img src="https://www.trafforddatalab.io/assets/logo/trafforddatalab_logo.svg" alt="Trafford Data Lab" width="93" class="traffordDataLabLogo"/></a>
+          <h1>Local COVID-19</h1>
+        </header>
+        <main>'),
+  div(class = "centred",
+      selectInput(inputId = "ltla",
+                  label = "Local Authority:",
+                  choices = c("Please make a selection" = '', sort(unique(ltla$area_name))))),
   tabsetPanel(type = "pills",
               tabPanel("Summary",
-                       fluidRow(
-                         div(class = "col-sm-6",
-                             br(),
-                             htmlOutput("summary_text")))),
+                       div(class = "container-fluid",
+                           div(class = "row",
+                               div(class = "col-sm-1 col-md-2 col-lg-3"),
+                               div(class = "col-sm-10 col-md-8 col-lg-6",
+                                   br(),
+                                   htmlOutput("summary_text")),
+                               div(class = "col-sm-1 col-md-2 col-lg-3")
+                      ))),
+              
               tabPanel("New cases",
-                       fluidRow(
-                         div(class = "col-sm-8",
-                             br(),
-                             uiOutput("new_cases_ui"),
-                             br(),
-                             girafeOutput("new_cases_plot", width = "100%"),
-                         ))),
+                       div(class = "container-fluid",
+                           div(class = "row",
+                               div(class = "col-sm-1 col-md-2 col-lg-3"),
+                               div(class = "col-xs-12 col-sm-10 col-md-8 col-lg-6",
+                                   uiOutput("new_cases_ui"),
+                                   girafeOutput("new_cases_plot", width = "100%")),
+                               div(class = "col-sm-1 col-md-2 col-lg-3")
+                      ))),
+              
               tabPanel("Total cases",
-                       fluidRow(
-                         div(class = "col-sm-8",
-                             br(),
-                             uiOutput("total_cases_ui"),
-                             br(),
-                             uiOutput("total_cases_table_title"),
-                             br(),
-                             reactableOutput("total_cases_table", height = "100%"),
-                             br()
-                         ))),
+                       div(style = "max-width: 620px; margin: 0 auto; overflow-x: scroll;",
+                           uiOutput("total_cases_ui"),
+                           uiOutput("total_cases_table_title"),
+                           br(),
+                           reactableOutput("total_cases_table"))
+                      ),
+              
               tabPanel("Hospital deaths",
-                       fluidRow(
-                         div(class = "col-sm-8",
-                             br(),
-                             uiOutput("hospital_deaths_ui"),
-                             br(),
-                             girafeOutput("hospital_deaths_plot", width = "100%"),
-                                    ))),
+                       div(class = "container-fluid",
+                           div(class = "row",
+                               div(class = "col-sm-1 col-md-2 col-lg-3"),
+                               div(class = "col-xs-12 col-sm-10 col-md-8 col-lg-6",
+                                   uiOutput("hospital_deaths_ui"),
+                                   girafeOutput("hospital_deaths_plot", width = "100%")),
+                               div(class = "col-sm-1 col-md-2 col-lg-3")
+                      ))),
+                       
               tabPanel("Care home deaths",
-                       fluidRow(
-                         div(class = "col-sm-8",
-                         br(),
-                         uiOutput("care_home_deaths_ui"),
-                         br(),
-                         girafeOutput("care_home_deaths_plot", width = "100%"),
-                         )))
+                       div(class = "container-fluid",
+                           div(class = "row",
+                               div(class = "col-sm-1 col-md-2 col-lg-3"),
+                               div(class = "col-xs-12 col-sm-10 col-md-8 col-lg-6",
+                                   uiOutput("care_home_deaths_ui"),
+                                   girafeOutput("care_home_deaths_plot", width = "100%")),
+                               div(class = "col-sm-1 col-md-2 col-lg-3")
+                      )))
+                             
   ),
   HTML("</main>
         <script>
@@ -265,24 +264,6 @@ ui <- bootstrapPage(
             }
             
           });
-          
-             
-          // *** NOT IMPLEMENTED YET ***       
-          // Add ARIA attributes to inform users when the plots and tables change content.
-          // Need setInterval as the elements may not have been added to the DOM yet.
-          /*var ariaCallback = setInterval(updateShinyAria, 500);
-                            
-          function updateShinyAria() {
-            var arrShinyContainers = document.getElementsByClassName('shiny-bound-output');
-  
-            if (arrShinyContainers.length > 0) {
-              for (var i = 0; i < arrShinyContainers.length; i++) {
-                arrShinyContainers[i].setAttribute('aria-live', 'polite');
-              }
-                                
-              clearInterval(ariaCallback);  // cancel the callback as we have added the attributes
-            }
-          }*/
         </script>"))
 
 shinyApp(ui, function(input,output,session){
@@ -336,7 +317,7 @@ shinyApp(ui, function(input,output,session){
     ggplot() +
       geom_hline(yintercept = 0, size = 0.3, colour = "#333333") +
       geom_col_interactive(data = new_cases_selection(), aes(x = date, y = new_cases, tooltip = tooltip), 
-               fill = ifelse(new_cases_selection()$date >= max(new_cases_selection()$date)-4, "#bdbdbd", "#39809E"), alpha = 0.6) +
+                           fill = ifelse(new_cases_selection()$date >= max(new_cases_selection()$date)-4, "#bdbdbd", "#39809E"), alpha = 0.6) +
       geom_line_interactive(data = new_cases_selection(), aes(x = date, y = ma_cases, tooltip = "7 day rolling average", colour = "ma_cases"), size = 1) +
       scale_colour_manual(values = c("ma_cases" = "#39809E"), name = NULL, labels = "7-day rolling average") +
       scale_x_date(breaks = c(min(new_cases_selection()$date), max(new_cases_selection()$date)), date_labels = "%d-%b") +
@@ -359,290 +340,289 @@ shinyApp(ui, function(input,output,session){
             axis.ticks.x = element_line(colour = 'black', size = 0.5))
   )
   
- output$new_cases_plot <- renderGirafe({
-   req(input$ltla)
-   gg <- new_cases_plot()
-   girafe(ggobj = gg, width_svg = 7,
-          options = list(
-            opts_sizing(rescale = FALSE),
-            opts_tooltip(use_fill = TRUE),
-            opts_toolbar(saveaspng = FALSE)))
-   })
- 
- output$new_cases_ui <- renderUI({
-   req(input$ltla)
-   div(
-     div(style = "position: absolute; right: 8.5em; top: 0em;",
-         dropdown(includeMarkdown("data/metadata/new_cases.md"), inputId = "newCasesInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
-     div(style = "position: absolute; right: 5em; top: 0em;",
-         dropdown(download_button("download_new_cases_plot", label = "Download plot"), inputId = "newCasesDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
-     div(style = "position: absolute; right: 1.5em; top: 0em;",
-         dropdown(download_button("download_new_cases_data", label = "Get the data"), inputId = "newCasesDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
-         tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
-     )
- })
+  output$new_cases_plot <- renderGirafe({
+    req(input$ltla)
+    gg <- new_cases_plot()
+    girafe(ggobj = gg, width_svg = 7,
+           options = list(
+             opts_sizing(rescale = FALSE),
+             opts_tooltip(use_fill = TRUE),
+             opts_toolbar(saveaspng = FALSE)))
+  })
   
- output$download_new_cases_plot <- downloadHandler(
+  output$new_cases_ui <- renderUI({
+    req(input$ltla)
+    div(class = "infoAndDownloadOptionsContainer",
+      div(class = "infoAndDownloadOptions",
+          dropdown(includeMarkdown("data/metadata/new_cases.md"), inputId = "newCasesInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = FALSE, up = FALSE)),
+      div(class = "infoAndDownloadOptions",
+          dropdown(download_button("download_new_cases_plot", label = "Download plot"), inputId = "newCasesDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
+      div(class = "infoAndDownloadOptions",
+          dropdown(download_button("download_new_cases_data", label = "Get the data"), inputId = "newCasesDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
+          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
+    )
+  })
+  
+  output$download_new_cases_plot <- downloadHandler(
     filename = function() {paste0("new_cases_", input$ltla, ".png")},
     content = function(file) {ggsave(file, plot = new_cases_plot(), width = 8, height = 6, dpi = 300, device = "png")}
   )
- 
- output$download_new_cases_data <- downloadHandler(
-   filename = function() {paste0("new_cases_", input$ltla, ".csv")},
-   content = function(file) {write.csv(
-     new_cases_selection() %>% 
-       select(-c(ma_cases, tooltip)) %>% 
-       arrange(desc(date)),
-            file, row.names = FALSE)}
-   )
- 
- # -------------------------------------------
- # Total cases
- # -------------------------------------------
- 
- cipfa <- reactive({
-   req(input$ltla)
-   tryCatch(c(fromJSON(paste0("https://fingertips.phe.org.uk/api/areas/by_parent_area_code?area_type_id=101&parent_area_code=nn-1-", pull(filter(ltla, area_name == input$ltla), area_code)), flatten = TRUE) %>%
-                pull(Code),
-              pull(filter(ltla, area_name == input$ltla), area_code)),
-            error = function(cond) { return(NULL) },
-            warning = function(cond) { return(NULL) },
-            finally = NA)
- })
- 
- total_cases_selection <- reactive(
-   filter(cases, area_code %in% cipfa(), date >= max(date)-days(8) & date <= max(date)-days(2)) %>% 
-     group_by(area_name) %>% 
-     summarise(cum_cases = max(cum_cases),
-               cum_rate = round(max(cum_rate),0),
-               recent_cases = sum(new_cases),
-               recent_rate = round(recent_cases/population*100000,0)) %>% 
-     distinct(area_name, .keep_all = TRUE)
- )
- 
- output$total_cases_table <- renderReactable({
-   req(input$ltla)
-   
-   shiny::validate(
-     need(try(!is.null(cipfa())), "Please refer to the summary page for the total number of cases")
-   )
-   
-   with_tooltip <- function(value, tooltip) {
-     span(style = "text-decoration: underline; text-decoration-style: dotted;", title = tooltip, value)
-   }
-   
-   sticky_style <- list(position = "sticky", left = 0, zIndex = 1,
-                        borderRight = "1px solid #eee")
-   
-   reactable(class = "table",
-             total_cases_selection(),
-             height = 600,
-             pagination = FALSE,
-             wrap = FALSE,
-             defaultColGroup = colGroup(headerClass = "group-header", align = "left"),
-             defaultColDef = colDef(headerClass = "header", align = "left"),
-             defaultSorted = "recent_rate",
-             defaultSortOrder = "desc",
-             rowClass = function(index) {if (total_cases_selection()[index, "area_name"] == input$ltla) {"value-highlight"}},
-             columns = list(
-               area_name = colDef(name = "Local Authority", 
-                                  minWidth = 210,
-                                  style = sticky_style,
-                                  headerStyle = sticky_style),
-               cum_cases = colDef(name = "Cases",
+  
+  output$download_new_cases_data <- downloadHandler(
+    filename = function() {paste0("new_cases_", input$ltla, ".csv")},
+    content = function(file) {write.csv(
+      new_cases_selection() %>% 
+        select(-c(ma_cases, tooltip)) %>% 
+        arrange(desc(date)),
+      file, row.names = FALSE)}
+  )
+  
+  # -------------------------------------------
+  # Total cases
+  # -------------------------------------------
+  
+  cipfa <- reactive({
+    req(input$ltla)
+    tryCatch(c(fromJSON(paste0("https://fingertips.phe.org.uk/api/areas/by_parent_area_code?area_type_id=101&parent_area_code=nn-1-", pull(filter(ltla, area_name == input$ltla), area_code)), flatten = TRUE) %>%
+                 pull(Code),
+               pull(filter(ltla, area_name == input$ltla), area_code)),
+             error = function(cond) { return(NULL) },
+             warning = function(cond) { return(NULL) },
+             finally = NA)
+  })
+  
+  total_cases_selection <- reactive(
+    filter(cases, area_code %in% cipfa(), date >= max(date)-days(8) & date <= max(date)-days(2)) %>% 
+      group_by(area_name) %>% 
+      summarise(cum_cases = max(cum_cases),
+                cum_rate = round(max(cum_rate),0),
+                recent_cases = sum(new_cases),
+                recent_rate = round(recent_cases/population*100000,0)) %>% 
+      distinct(area_name, .keep_all = TRUE)
+  )
+  
+  output$total_cases_table <- renderReactable({
+    req(input$ltla)
+    
+    shiny::validate(
+      need(try(!is.null(cipfa())), "Please refer to the summary page for the total number of cases")
+    )
+    
+    with_tooltip <- function(value, tooltip) {
+      span(style = "text-decoration: underline; text-decoration-style: dotted;", title = tooltip, value)
+    }
+    
+    sticky_style <- list(left = 0, zIndex = 1, borderRight = "1px solid #eee")
+    
+    reactable(class = "table",
+              total_cases_selection(),
+              height = 600,
+              pagination = FALSE,
+              wrap = FALSE,
+              defaultColGroup = colGroup(headerClass = "group-header", align = "left"),
+              defaultColDef = colDef(headerClass = "header", align = "left"),
+              defaultSorted = "recent_rate",
+              defaultSortOrder = "desc",
+              rowClass = function(index) {if (total_cases_selection()[index, "area_name"] == input$ltla) {"value-highlight"}},
+              columns = list(
+                area_name = colDef(name = "Local Authority", 
+                                   minWidth = 210,
+                                   style = sticky_style,
+                                   headerStyle = sticky_style),
+                cum_cases = colDef(name = "Cases",
+                                   format = colFormat(separators = TRUE),
+                                   align = "left"),
+                cum_rate = colDef(name = "Per 100K",
                                   format = colFormat(separators = TRUE),
                                   align = "left"),
-               cum_rate = colDef(name = "Per 100,000",
-                                 format = colFormat(separators = TRUE),
-                                 align = "left"),
-               recent_cases = colDef(name = "Cases",
+                recent_cases = colDef(name = "Cases",
+                                      format = colFormat(separators = TRUE),
+                                      align = "left"),
+                recent_rate = colDef(name = "Per 100K",
                                      format = colFormat(separators = TRUE),
-                                     align = "left"),
-               recent_rate = colDef(name = "Per 100,000",
-                                    format = colFormat(separators = TRUE),
-                                    align = "left")
-             ),
-             columnGroups = list(
-               colGroup(name = "Total cases", columns = c("cum_cases", "cum_rate")),
-               colGroup(name = "Last 7 days", columns = c("recent_cases", "recent_rate"))
-             )
-      )
- })
- 
- output$total_cases_ui <- renderUI({
-   req(input$ltla, !is.null(cipfa()))
-   
-   div(
-     div(style = "position: absolute; right: 8.5em; top: 0em;",
-         dropdown(includeMarkdown("data/metadata/total_cases.md"), inputId = "totalCasesInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
-     div(style = "position: absolute; right: 5em; top: 0em;",
-         dropdown(download_button("download_total_cases_data", label = "Get the data"), inputId = "totalCasesDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
-         tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
-   )
-   
- })
- 
- output$total_cases_table_title <- renderUI({
-   req(input$ltla, !is.null(cipfa()))
-   
-  div(style = "text-align: center; margin: 8px 0; font-size: 16px;",
-       div(style = "font-size: 16px; font-weight: 600;", 
-           paste("Cumulative confirmed cases,", format(max(cases$date)-days(2), '%d %B %Y'))),
-       paste(input$ltla , "compared with similar local authorities")
-   )
+                                     align = "left")
+              ),
+              columnGroups = list(
+                colGroup(name = "Total cases", columns = c("cum_cases", "cum_rate")),
+                colGroup(name = "Last 7 days", columns = c("recent_cases", "recent_rate"))
+              )
+    )
+  })
   
- })
- 
- output$download_total_cases_data <- downloadHandler(
-   filename = function() {paste0("total_cases_", input$ltla, ".csv")},
-   content = function(file) {write.csv(
-     total_cases_selection() %>% 
-       rename(`Local authority` = area_name,
-              `Total cases` = cum_cases,
-              `Rate` = cum_rate,
-              `Total cases - last 7 days` = recent_cases,
-              `Rate - last 7 days` = recent_rate),
-     file, row.names = FALSE)}
- )
- 
- # -------------------------------------------
- # Hospital deaths
- # -------------------------------------------
- 
- hospital_deaths_selection <- reactive(
-   filter(deaths, area_name == input$ltla, place_of_death == "Hospital") %>% 
-     mutate(tooltip =  paste0("<strong>", number_of_deaths, "</strong> deaths<br/>", "<em>", cause_of_death, "</em><br/>", date))
- )
-
- hospital_deaths_plot <- reactive(
-   ggplot(hospital_deaths_selection(), aes(x = date, y = number_of_deaths)) +
-     geom_col_interactive(aes(fill = fct_rev(cause_of_death), tooltip = tooltip)) +
-     geom_hline(yintercept = 0, size = 0.3, colour = "#333333") +
-     scale_fill_manual(values = c("COVID-19" = "#8D2313", "Other causes" = "#d4ada7"), guide = guide_legend(reverse = TRUE)) +
-     scale_x_date(date_breaks = "1 month", date_labels = "%b %y") +
-     scale_y_continuous(expand = c(0.005, 0.005), position = "right") +
-     labs(x = NULL, y = NULL, 
-          title = "Weekly registered deaths in hospital",
-          subtitle = paste0(input$ltla, ", to week ending ", format(max(hospital_deaths_selection()$date), '%d %B %Y')), 
-          caption = "Source: Office for National Statistics",
-          fill = NULL) +
-     theme_minimal() +
-     theme(plot.margin = unit(rep(0.5, 4), "cm"),
-           panel.spacing = unit(1, "lines"),
-           panel.grid.major.x = element_blank(),
-           panel.grid.minor = element_blank(),
-           plot.title.position = "plot",
-           plot.title = element_text(size = 14, face = "bold"),
-           plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
-           plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10)),
-           axis.text.x = element_text(angle = 90),
-           legend.position = "top", 
-           legend.justification = "left")
- )
- 
- output$hospital_deaths_plot <- renderGirafe({
-   req(input$ltla)
-   gg <- hospital_deaths_plot()
-   girafe(ggobj = gg, width_svg = 7,
-          options = list(
-            opts_sizing(rescale = FALSE),
-            opts_tooltip(use_fill = TRUE),
-            opts_toolbar(saveaspng = FALSE)))
- })
- 
- output$hospital_deaths_ui <- renderUI({
-   req(input$ltla)
-   div(
-     div(style = "position: absolute; right: 8.5em; top: 0em;",
-         dropdown(includeMarkdown("data/metadata/hospital_deaths.md"), inputId = "hospitalDeathsInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
-     div(style = "position: absolute; right: 5em; top: 0em;",
-         dropdown(download_button("download_hospital_deaths_plot", label = "Download plot"), inputId = "hospitalDeathsDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
-     div(style = "position: absolute; right: 1.5em; top: 0em;",
-         dropdown(download_button("download_hospital_deaths_data", label = "Get the data"), inputId = "hospitalDeathsDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
-         tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
-     )
- })
- 
- output$download_hospital_deaths_plot <- downloadHandler(
-   filename = function() {paste0("hospital_deaths_", input$ltla, ".png")},
-   content = function(file) {ggsave(file, plot = hospital_deaths_plot(), width = 8, height = 6, dpi = 300, device = "png")}
- )
- 
- output$download_hospital_deaths_data <- downloadHandler(
-   filename = function() {paste0("hospital_deaths_", input$ltla, ".csv")},
-   content = function(file) {write.csv(
-     hospital_deaths_selection() %>% select(-tooltip),
-     file, row.names = FALSE)}
- )
- 
- # -------------------------------------------
- # Care homes deaths
- # -------------------------------------------
- 
- care_home_deaths_selection <- reactive(
-   filter(deaths, area_name == input$ltla, place_of_death == "Care home") %>% 
-     mutate(tooltip =  paste0("<strong>", number_of_deaths, "</strong> deaths<br/>", "<em>", cause_of_death, "</em><br/>", date))
- )
- 
- care_home_deaths_plot <- reactive(
-   ggplot(care_home_deaths_selection(), aes(x = date, y = number_of_deaths)) +
-     geom_col_interactive(aes(fill = fct_rev(cause_of_death), tooltip = tooltip)) +
-     geom_hline(yintercept = 0, size = 0.3, colour = "#333333") +
-     scale_fill_manual(values = c("COVID-19" = "#8D2313", "Other causes" = "#d4ada7"), guide = guide_legend(reverse = TRUE)) +
-     scale_x_date(date_breaks = "1 month", date_labels = "%b %y") +
-     scale_y_continuous(expand = c(0.005, 0.005), position = "right") +
-     labs(x = NULL, y = NULL, 
-          title = "Weekly registered deaths in care homes",
-          subtitle = paste0(input$ltla, ", to week ending ", format(max(care_home_deaths_selection()$date), '%d %B %Y')), 
-          caption = "Source: Office for National Statistics",
-          fill = NULL) +
-     theme_minimal() +
-     theme(plot.margin = unit(rep(0.5, 4), "cm"),
-           panel.spacing = unit(1, "lines"),
-           panel.grid.major.x = element_blank(),
-           panel.grid.minor = element_blank(),
-           plot.title.position = "plot",
-           plot.title = element_text(size = 14, face = "bold"),
-           plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
-           plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10)),
-           axis.text.x = element_text(angle = 90),
-           legend.position = "top", 
-           legend.justification = "left")
- )
- 
- output$care_home_deaths_plot <- renderGirafe({
-   req(input$ltla)
-   gg <- care_home_deaths_plot()
-   girafe(ggobj = gg, width_svg = 7,  
-          options = list(
-            opts_sizing(rescale = FALSE),
-            opts_tooltip(use_fill = TRUE),
-            opts_toolbar(saveaspng = FALSE)))
- })
- 
- output$care_home_deaths_ui <- renderUI({
-   req(input$ltla)
-   div(
-     div(style = "position: absolute; right: 8.5em; top: 0em;",
-         dropdown(includeMarkdown("data/metadata/care_home_deaths.md"), inputId = "careHomeDeathsInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = TRUE, up = FALSE)),
-     div(style = "position: absolute; right: 5em; top: 0em;",
-         dropdown(download_button("download_care_home_deaths_plot", label = "Download plot"), inputId = "careHomeDeathsDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
-     div(style = "position: absolute; right: 1.5em; top: 0em;",
-         dropdown(download_button("download_care_home_deaths_data", label = "Get the data"), inputId = "careHomeDeathsDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
-         tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
-     )
- })
- 
- output$download_care_home_deaths_plot <- downloadHandler(
-   filename = function() {paste0("care_home_deaths_", input$ltla, ".png")},
-   content = function(file) {ggsave(file, plot = care_home_deaths_plot(), width = 8, height = 6, dpi = 300, device = "png")}
- )
- 
- output$download_care_home_deaths_data <- downloadHandler(
-   filename = function() {paste0("care_home_deaths_", input$ltla, ".csv")},
-   content = function(file) {write.csv(
-     care_home_deaths_selection() %>% select(-tooltip),
-     file, row.names = FALSE)}
- )
- 
+  output$total_cases_ui <- renderUI({
+    req(input$ltla, !is.null(cipfa()))
+    
+    div(class = "infoAndDownloadOptionsContainer",
+      div(class = "infoAndDownloadOptions",
+          dropdown(includeMarkdown("data/metadata/total_cases.md"), inputId = "totalCasesInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = FALSE, up = FALSE)),
+      div(class = "infoAndDownloadOptions",
+          dropdown(download_button("download_total_cases_data", label = "Get the data"), inputId = "totalCasesDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
+          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
+    )
+    
+  })
+  
+  output$total_cases_table_title <- renderUI({
+    req(input$ltla, !is.null(cipfa()))
+    
+    div(style = "text-align: center; margin: 8px 0; font-size: 16px;",
+        div(style = "font-size: 16px; font-weight: 600;", 
+            paste("Cumulative confirmed cases,", format(max(cases$date)-days(2), '%d %B %Y'))),
+        paste(input$ltla , "compared with similar local authorities")
+    )
+    
+  })
+  
+  output$download_total_cases_data <- downloadHandler(
+    filename = function() {paste0("total_cases_", input$ltla, ".csv")},
+    content = function(file) {write.csv(
+      total_cases_selection() %>% 
+        rename(`Local authority` = area_name,
+               `Total cases` = cum_cases,
+               `Rate` = cum_rate,
+               `Total cases - last 7 days` = recent_cases,
+               `Rate - last 7 days` = recent_rate),
+      file, row.names = FALSE)}
+  )
+  
+  # -------------------------------------------
+  # Hospital deaths
+  # -------------------------------------------
+  
+  hospital_deaths_selection <- reactive(
+    filter(deaths, area_name == input$ltla, place_of_death == "Hospital") %>% 
+      mutate(tooltip =  paste0("<strong>", number_of_deaths, "</strong> deaths<br/>", "<em>", cause_of_death, "</em><br/>", date))
+  )
+  
+  hospital_deaths_plot <- reactive(
+    ggplot(hospital_deaths_selection(), aes(x = date, y = number_of_deaths)) +
+      geom_col_interactive(aes(fill = fct_rev(cause_of_death), tooltip = tooltip)) +
+      geom_hline(yintercept = 0, size = 0.3, colour = "#333333") +
+      scale_fill_manual(values = c("COVID-19" = "#8D2313", "Other causes" = "#d4ada7"), guide = guide_legend(reverse = TRUE)) +
+      scale_x_date(date_breaks = "1 month", date_labels = "%b %y") +
+      scale_y_continuous(expand = c(0.005, 0.005), position = "right") +
+      labs(x = NULL, y = NULL, 
+           title = "Weekly registered deaths in hospital",
+           subtitle = paste0(input$ltla, ", to week ending ", format(max(hospital_deaths_selection()$date), '%d %B %Y')), 
+           caption = "Source: Office for National Statistics",
+           fill = NULL) +
+      theme_minimal() +
+      theme(plot.margin = unit(rep(0.5, 4), "cm"),
+            panel.spacing = unit(1, "lines"),
+            panel.grid.major.x = element_blank(),
+            panel.grid.minor = element_blank(),
+            plot.title.position = "plot",
+            plot.title = element_text(size = 14, face = "bold"),
+            plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
+            plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10)),
+            axis.text.x = element_text(angle = 90),
+            legend.position = "top", 
+            legend.justification = "left")
+  )
+  
+  output$hospital_deaths_plot <- renderGirafe({
+    req(input$ltla)
+    gg <- hospital_deaths_plot()
+    girafe(ggobj = gg, width_svg = 7,
+           options = list(
+             opts_sizing(rescale = FALSE),
+             opts_tooltip(use_fill = TRUE),
+             opts_toolbar(saveaspng = FALSE)))
+  })
+  
+  output$hospital_deaths_ui <- renderUI({
+    req(input$ltla)
+    div(class = "infoAndDownloadOptionsContainer",
+      div(class = "infoAndDownloadOptions",
+          dropdown(includeMarkdown("data/metadata/hospital_deaths.md"), inputId = "hospitalDeathsInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = FALSE, up = FALSE)),
+      div(class = "infoAndDownloadOptions",
+          dropdown(download_button("download_hospital_deaths_plot", label = "Download plot"), inputId = "hospitalDeathsDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
+      div(class = "infoAndDownloadOptions",
+          dropdown(download_button("download_hospital_deaths_data", label = "Get the data"), inputId = "hospitalDeathsDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
+          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
+    )
+  })
+  
+  output$download_hospital_deaths_plot <- downloadHandler(
+    filename = function() {paste0("hospital_deaths_", input$ltla, ".png")},
+    content = function(file) {ggsave(file, plot = hospital_deaths_plot(), width = 8, height = 6, dpi = 300, device = "png")}
+  )
+  
+  output$download_hospital_deaths_data <- downloadHandler(
+    filename = function() {paste0("hospital_deaths_", input$ltla, ".csv")},
+    content = function(file) {write.csv(
+      hospital_deaths_selection() %>% select(-tooltip),
+      file, row.names = FALSE)}
+  )
+  
+  # -------------------------------------------
+  # Care homes deaths
+  # -------------------------------------------
+  
+  care_home_deaths_selection <- reactive(
+    filter(deaths, area_name == input$ltla, place_of_death == "Care home") %>% 
+      mutate(tooltip =  paste0("<strong>", number_of_deaths, "</strong> deaths<br/>", "<em>", cause_of_death, "</em><br/>", date))
+  )
+  
+  care_home_deaths_plot <- reactive(
+    ggplot(care_home_deaths_selection(), aes(x = date, y = number_of_deaths)) +
+      geom_col_interactive(aes(fill = fct_rev(cause_of_death), tooltip = tooltip)) +
+      geom_hline(yintercept = 0, size = 0.3, colour = "#333333") +
+      scale_fill_manual(values = c("COVID-19" = "#8D2313", "Other causes" = "#d4ada7"), guide = guide_legend(reverse = TRUE)) +
+      scale_x_date(date_breaks = "1 month", date_labels = "%b %y") +
+      scale_y_continuous(expand = c(0.005, 0.005), position = "right") +
+      labs(x = NULL, y = NULL, 
+           title = "Weekly registered deaths in care homes",
+           subtitle = paste0(input$ltla, ", to week ending ", format(max(care_home_deaths_selection()$date), '%d %B %Y')), 
+           caption = "Source: Office for National Statistics",
+           fill = NULL) +
+      theme_minimal() +
+      theme(plot.margin = unit(rep(0.5, 4), "cm"),
+            panel.spacing = unit(1, "lines"),
+            panel.grid.major.x = element_blank(),
+            panel.grid.minor = element_blank(),
+            plot.title.position = "plot",
+            plot.title = element_text(size = 14, face = "bold"),
+            plot.subtitle = element_text(size = 12, margin = margin(b = 20)),
+            plot.caption = element_text(colour = "grey60", margin = margin(t = 20, b = -10)),
+            axis.text.x = element_text(angle = 90),
+            legend.position = "top", 
+            legend.justification = "left")
+  )
+  
+  output$care_home_deaths_plot <- renderGirafe({
+    req(input$ltla)
+    gg <- care_home_deaths_plot()
+    girafe(ggobj = gg, width_svg = 7,  
+           options = list(
+             opts_sizing(rescale = FALSE),
+             opts_tooltip(use_fill = TRUE),
+             opts_toolbar(saveaspng = FALSE)))
+  })
+  
+  output$care_home_deaths_ui <- renderUI({
+    req(input$ltla)
+    div(class = "infoAndDownloadOptionsContainer",
+      div(class = "infoAndDownloadOptions",
+          dropdown(includeMarkdown("data/metadata/care_home_deaths.md"), inputId = "careHomeDeathsInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = FALSE, up = FALSE)),
+      div(class = "infoAndDownloadOptions",
+          dropdown(download_button("download_care_home_deaths_plot", label = "Download plot"), inputId = "careHomeDeathsDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
+      div(class = "infoAndDownloadOptions",
+          dropdown(download_button("download_care_home_deaths_data", label = "Get the data"), inputId = "careHomeDeathsDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
+          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
+    )
+  })
+  
+  output$download_care_home_deaths_plot <- downloadHandler(
+    filename = function() {paste0("care_home_deaths_", input$ltla, ".png")},
+    content = function(file) {ggsave(file, plot = care_home_deaths_plot(), width = 8, height = 6, dpi = 300, device = "png")}
+  )
+  
+  output$download_care_home_deaths_data <- downloadHandler(
+    filename = function() {paste0("care_home_deaths_", input$ltla, ".csv")},
+    content = function(file) {write.csv(
+      care_home_deaths_selection() %>% select(-tooltip),
+      file, row.names = FALSE)}
+  )
+  
 })
