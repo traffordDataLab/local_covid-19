@@ -1,6 +1,6 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans%7CRoboto');
 
-html, body
+html, body, text
 {
     font-family: 'Open Sans', sans-serif;
     color: #212121;
