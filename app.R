@@ -31,8 +31,7 @@ ui <- bootstrapPage(
   title = "Local COVID-19",
   theme = my_theme,
   lang = "en-GB", # set the language of the page - important for accessibility
-  # put the CSS in the head section rather than in the body - for HTML5 conformity
-  tags$head(includeCSS("styles.css")),
+  tags$head(includeCSS("styles.css")), # put the CSS in the head section rather than in the body - for HTML5 conformity
   HTML('<header>
           <a href="https://www.trafforddatalab.io" aria-label="Return to Trafford Data Lab home page"><img src="https://www.trafforddatalab.io/assets/logo/trafforddatalab_logo.svg" alt="Trafford Data Lab" width="93" class="traffordDataLabLogo"/></a>
           <h1>Local COVID-19</h1>
@@ -44,27 +43,19 @@ ui <- bootstrapPage(
                   choices = c("Please make a selection" = '', sort(unique(ltla$area_name))))),
   tabsetPanel(type = "pills",
               tabPanel("Summary",
-                       div(class = "container-fluid",
-                           div(class = "row",
-                               div(class = "col-sm-1 col-md-2 col-lg-3"),
-                               div(class = "col-sm-10 col-md-8 col-lg-6",
-                                   br(),
-                                   htmlOutput("summary_text")),
-                               div(class = "col-sm-1 col-md-2 col-lg-3")
-                      ))),
+                       div(style = "max-width: 620px; margin: 0 auto; padding: 0 1em;",
+                           br(),
+                           htmlOutput("summary_text"))
+                      ),
               
               tabPanel("New cases",
-                       div(class = "container-fluid",
-                           div(class = "row",
-                               div(class = "col-sm-1 col-md-2 col-lg-3"),
-                               div(class = "col-xs-12 col-sm-10 col-md-8 col-lg-6",
-                                   uiOutput("new_cases_ui"),
-                                   girafeOutput("new_cases_plot", width = "100%")),
-                               div(class = "col-sm-1 col-md-2 col-lg-3")
-                      ))),
+                       div(style = "max-width: 510px; margin: 0 auto; overflow-x: auto;",
+                           uiOutput("new_cases_ui"),
+                           girafeOutput("new_cases_plot", width = "100%"))
+                      ),
               
               tabPanel("Total cases",
-                       div(style = "max-width: 620px; margin: 0 auto; overflow-x: scroll;",
+                       div(style = "max-width: 620px; margin: 0 auto; overflow-x: auto;",
                            uiOutput("total_cases_ui"),
                            uiOutput("total_cases_table_title"),
                            br(),
@@ -72,24 +63,16 @@ ui <- bootstrapPage(
                       ),
               
               tabPanel("Hospital deaths",
-                       div(class = "container-fluid",
-                           div(class = "row",
-                               div(class = "col-sm-1 col-md-2 col-lg-3"),
-                               div(class = "col-xs-12 col-sm-10 col-md-8 col-lg-6",
-                                   uiOutput("hospital_deaths_ui"),
-                                   girafeOutput("hospital_deaths_plot", width = "100%")),
-                               div(class = "col-sm-1 col-md-2 col-lg-3")
-                      ))),
+                       div(style = "max-width: 510px; margin: 0 auto; overflow-x: auto;",
+                           uiOutput("hospital_deaths_ui"),
+                           girafeOutput("hospital_deaths_plot", width = "100%"))
+                      ),
                        
               tabPanel("Care home deaths",
-                       div(class = "container-fluid",
-                           div(class = "row",
-                               div(class = "col-sm-1 col-md-2 col-lg-3"),
-                               div(class = "col-xs-12 col-sm-10 col-md-8 col-lg-6",
-                                   uiOutput("care_home_deaths_ui"),
-                                   girafeOutput("care_home_deaths_plot", width = "100%")),
-                               div(class = "col-sm-1 col-md-2 col-lg-3")
-                      )))
+                       div(style = "max-width: 510px; margin: 0 auto; overflow-x: auto;",
+                           uiOutput("care_home_deaths_ui"),
+                           girafeOutput("care_home_deaths_plot", width = "100%"))
+                      )
                              
   ),
   HTML("</main>
