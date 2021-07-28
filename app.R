@@ -136,6 +136,24 @@ ui <- bootstrapPage(
                   }
               }, 500);
               
+              // Improve the accessibility of the SVG plot
+              var cb_newCasesPlot = setInterval(function() {
+                  try {
+                      // Get the SVG plot element
+                      var plot = document.getElementById('new_cases_plot').getElementsByTagName('svg')[0];
+                      
+                      // Make sure the SVG is treated as a single entity by adding role='img' to the <svg>
+                      plot.setAttribute('role', 'img');
+                      
+                      // Add aria-label to the <svg> to explain the purpose of the plot
+                      plot.setAttribute('aria-label', 'Plot of daily confirmed new COVID-19 cases in ' + la);
+                      
+                      clearInterval(cb_newCasesPlot); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
             }
             
             if (event.target.id === 'total_cases_ui' && la !== '' && la !== null) {
@@ -204,6 +222,25 @@ ui <- bootstrapPage(
                   }
               }, 500);
               
+              // Improve the accessibility of the SVG plot
+              var cb_hospitalDeathsPlot = setInterval(function() {
+                  try {
+                      // Get the SVG plot element
+                      var plot = document.getElementById('hospital_deaths_plot').getElementsByTagName('svg')[0];
+                      
+                      // Make sure the SVG is treated as a single entity by adding role='img' to the <svg>
+                      plot.setAttribute('role', 'img');
+                      
+                      // Add aria-label to the <svg> to explain the purpose of the plot
+                      plot.setAttribute('aria-label', 'Plot of weekly registered deaths in hospital from COVID-19 compared to other causes, ' + la);
+                      
+                      clearInterval(cb_hospitalDeathsPlot); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
             }
             
             if (event.target.id === 'care_home_deaths_ui' && la !== '' && la !== null) {
@@ -238,6 +275,25 @@ ui <- bootstrapPage(
                       var btn = document.getElementById('careHomeDeathsDownloadData');
                       btn.setAttribute('aria-label', 'Display popup containing a button to download the care home deaths data.');
                       clearInterval(cb_careHomeDeathsDownloadData); // cancel further calls to this fn
+                  }
+                  catch(e) {
+                      // do nothing, wait until function is called again next interval
+                  }
+              }, 500);
+              
+              // Improve the accessibility of the SVG plot
+              var cb_careHomeDeathsPlot = setInterval(function() {
+                  try {
+                      // Get the SVG plot element
+                      var plot = document.getElementById('care_home_deaths_plot').getElementsByTagName('svg')[0];
+                      
+                      // Make sure the SVG is treated as a single entity by adding role='img' to the <svg>
+                      plot.setAttribute('role', 'img');
+                      
+                      // Add aria-label to the <svg> to explain the purpose of the plot
+                      plot.setAttribute('aria-label', 'Plot of weekly registered deaths in care homes from COVID-19 compared to other causes, ' + la);
+                      
+                      clearInterval(cb_careHomeDeathsPlot); // cancel further calls to this fn
                   }
                   catch(e) {
                       // do nothing, wait until function is called again next interval
