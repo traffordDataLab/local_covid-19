@@ -422,7 +422,7 @@ shinyApp(ui, function(input,output,session){
   
   cipfa <- reactive({
     req(input$ltla)
-    tryCatch(c(fromJSON(paste0("https://fingertips.phe.org.uk/api/areas/by_parent_area_code?area_type_id=101&parent_area_code=nn-1-", pull(filter(ltla, area_name == input$ltla), area_code)), flatten = TRUE) %>%
+    tryCatch(c(fromJSON(paste0("https://fingertips.phe.org.uk/api/areas/by_parent_area_code?area_type_id=101&parent_area_code=nn-7-", pull(filter(ltla, area_name == input$ltla), area_code)), flatten = TRUE) %>%
                  pull(Code),
                pull(filter(ltla, area_name == input$ltla), area_code)),
              error = function(cond) { return(NULL) },
