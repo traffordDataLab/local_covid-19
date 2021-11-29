@@ -8,6 +8,7 @@ library(shinyWidgets)
 library(ggiraph)
 library(reactable)
 library(lubridate)
+library(markdown)
 
 source("global.R")
 
