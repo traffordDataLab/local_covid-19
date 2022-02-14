@@ -360,7 +360,7 @@ shinyApp(ui, function(input,output,session){
                            fill = ifelse(new_cases_selection()$date >= max(new_cases_selection()$date)-4, "#bdbdbd", "#39809E"), alpha = 0.6) +
       geom_line_interactive(data = new_cases_selection(), aes(x = date, y = ma_cases, tooltip = "7 day rolling average", colour = "ma_cases"), size = 1) +
       scale_colour_manual(values = c("ma_cases" = "#39809E"), name = NULL, labels = "7-day rolling average") +
-      scale_x_date(breaks = c(min(new_cases_selection()$date), max(new_cases_selection()$date)), date_labels = "%d-%b") +
+      scale_x_date(breaks = c(min(new_cases_selection()$date), max(new_cases_selection()$date)), date_labels = "%d-%b-%y") +
       scale_y_continuous(expand = c(0.005, 0.005), breaks = function(x) unique(
         floor(pretty(seq(0, (max(x) + 1) * 1.1)))), position = "right") +
       labs(x = NULL, y = NULL, 
