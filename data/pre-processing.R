@@ -51,9 +51,9 @@ ext <- read_html("https://www.ons.gov.uk/peoplepopulationandcommunity/healthands
 GET(url = paste0("https://www.ons.gov.uk", ext),
     write_disk(tmp))
 
-deaths_2022 <- read_xlsx(tmp, sheet = 4, skip = 3) %>%
+deaths_2022 <- read_xlsx(tmp, sheet = 4, skip = 5) %>% # 2022-11-10: previous skip value was 3, therefore there might be changes in future versions.
   clean_names() %>%
-  pivot_wider(names_from = cause_of_death, values_from = number_of_deaths) %>% 
+  pivot_wider(names_from = cause_of_death, values_from = deaths) %>% # 2022-11-10: previously "deaths" column was "number of deaths"
   rename(`COVID-19` = `COVID 19`) %>% 
   mutate(area_code = case_when(as.character(area_code) %in% c("E06000052", "E06000053") ~ "E06000052", TRUE ~ area_code),
          area_name = case_when(area_code == "E06000052" ~ "Cornwall and Isles of Scilly", TRUE ~ area_name),
