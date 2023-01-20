@@ -41,7 +41,7 @@ left_join(ltla, population, by = "area_code") %>%
 # URL: https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard
 
 
-# 2022 - Need to get the name of the data file dynamically as it changes each time it is updated unlike the previous complete years
+# 2023 - Need to get the name of the data file dynamically as it changes each time it is updated (weekly) unlike the previous complete years
 tmp <- tempfile(fileext = ".xlsx")
 ext <- read_html("https://www.ons.gov.uk/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard") %>% 
   html_nodes("a") %>%
@@ -49,6 +49,24 @@ ext <- read_html("https://www.ons.gov.uk/peoplepopulationandcommunity/healthands
   str_subset("\\.xlsx") %>% 
   .[[1]]
 GET(url = paste0("https://www.ons.gov.uk", ext),
+    write_disk(tmp))
+
+deaths_2023 <- read_xlsx(tmp, sheet = 4, skip = 5) %>%
+  clean_names() %>%
+  pivot_wider(names_from = cause_of_death, values_from = deaths) %>%
+  rename(`COVID-19` = `COVID 19`) %>% 
+  mutate(area_code = case_when(as.character(area_code) %in% c("E06000052", "E06000053") ~ "E06000052", TRUE ~ area_code),
+         area_name = case_when(area_code == "E06000052" ~ "Cornwall and Isles of Scilly", TRUE ~ area_name),
+         date = ymd("2023-01-01") + weeks(week_number),
+         `Other causes` = `All causes`-`COVID-19`) %>% 
+  group_by(area_code, area_name, date, week_number, place_of_death) %>% 
+  summarise(`COVID-19` = sum(`COVID-19`),
+            `Other causes` = sum(`Other causes`)) %>% 
+  pivot_longer(-c(area_code, area_name, week_number, date, place_of_death), names_to = "cause_of_death", values_to = "number_of_deaths")
+
+# 2022
+tmp <- tempfile(fileext = ".xlsx")
+GET(url = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard/2022/lahbfileweek522022reg14jan231.xlsx",
     write_disk(tmp))
 
 deaths_2022 <- read_xlsx(tmp, sheet = 4, skip = 5) %>% # 2022-11-10: previous skip value was 3, therefore there might be changes in future versions.
@@ -66,7 +84,7 @@ deaths_2022 <- read_xlsx(tmp, sheet = 4, skip = 5) %>% # 2022-11-10: previous sk
 
 # 2021
 tmp <- tempfile(fileext = ".xlsx")
-GET(url = "https://www.ons.gov.uk/file?uri=%2fpeoplepopulationandcommunity%2fhealthandsocialcare%2fcausesofdeath%2fdatasets%2fdeathregistrationsandoccurrencesbylocalauthorityandhealthboard%2f2021/lahbtables20211.xlsx",
+GET(url = "https://www.ons.gov.uk/file?uri=/peoplepopulationandcommunity/healthandsocialcare/causesofdeath/datasets/deathregistrationsandoccurrencesbylocalauthorityandhealthboard/2021/lahbtables20215.xlsx",
     write_disk(tmp))
 
 deaths_2021 <- read_xlsx(tmp, sheet = 4, skip = 3) %>%
@@ -100,5 +118,5 @@ deaths_2020 <- read_xlsx(tmp, sheet = 4, skip = 3) %>%
             `Other causes` = sum(`Other causes`)) %>% 
   pivot_longer(-c(area_code, area_name, week_number, date, place_of_death), names_to = "cause_of_death", values_to = "number_of_deaths")   
   
-bind_rows(deaths_2020, deaths_2021, deaths_2022) %>% 
+bind_rows(deaths_2020, deaths_2021, deaths_2022, deaths_2023) %>% 
   write_csv("deaths.csv")
