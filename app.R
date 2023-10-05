@@ -399,7 +399,7 @@ shinyApp(ui, function(input,output,session){
           dropdown(download_button("download_new_cases_plot", label = "Download plot"), inputId = "newCasesDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
       div(class = "infoAndDownloadOptions",
           dropdown(download_button("download_new_cases_data", label = "Get the data"), inputId = "newCasesDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
-          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
+          tags$style(HTML('.fas, .far {color: #525252;} .bttn-jelly .bttn-default {color:#f0f0f0;} .bttn-jelly:hover {background-color:#fff};')))
     )
   })
   
@@ -497,7 +497,7 @@ shinyApp(ui, function(input,output,session){
           dropdown(includeMarkdown("data/metadata/total_cases.md"), inputId = "totalCasesInfo", icon = icon("info-circle"), size = "s", style = "jelly", width = "400px", right = FALSE, up = FALSE)),
       div(class = "infoAndDownloadOptions",
           dropdown(download_button("download_total_cases_data", label = "Get the data"), inputId = "totalCasesDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
-          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
+          tags$style(HTML('.fas, .far {color: #525252;} .bttn-jelly .bttn-default {color:#f0f0f0;} .bttn-jelly:hover {background-color:#fff};')))
     )
     
   })
@@ -579,7 +579,7 @@ shinyApp(ui, function(input,output,session){
           dropdown(download_button("download_hospital_deaths_plot", label = "Download plot"), inputId = "hospitalDeathsDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
       div(class = "infoAndDownloadOptions",
           dropdown(download_button("download_hospital_deaths_data", label = "Get the data"), inputId = "hospitalDeathsDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
-          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
+          tags$style(HTML('.fas, .far {color: #525252;} .bttn-jelly .bttn-default {color:#f0f0f0;} .bttn-jelly:hover {background-color:#fff};')))
     )
   })
   
@@ -649,7 +649,7 @@ shinyApp(ui, function(input,output,session){
           dropdown(download_button("download_care_home_deaths_plot", label = "Download plot"), inputId = "careHomeDeathsDownloadPlot", icon = icon("image"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE)),
       div(class = "infoAndDownloadOptions",
           dropdown(download_button("download_care_home_deaths_data", label = "Get the data"), inputId = "careHomeDeathsDownloadData", icon = icon("table"), size = "s", style = "jelly", width = "180px", right = FALSE, up = FALSE),
-          tags$style(HTML('.fa {color: #525252;}.bttn-jelly.bttn-default{color:#f0f0f0;}.bttn-jelly:hover:before{opacity:1};')))
+          tags$style(HTML('.fas, .far {color: #525252;} .bttn-jelly .bttn-default {color:#f0f0f0;} .bttn-jelly:hover {background-color:#fff};')))
     )
   })
   
