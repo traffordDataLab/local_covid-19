@@ -8,5 +8,5 @@
 4. The number of *confirmed* cases is likely to be much lower than the *total* number of cases because not all people who report symptoms of coronavirus are being tested.    
 5. Confirmed cases include patients, key workers and their families.     
 6. Confirmed cases for Cornwall and the Isles of Scilly are combined.      
-7. The rate of cases is calculated by dividing the total number of cases by the mid-2020 estimate of the resident population of each local authority multiplied by 100,000.        
+7. The rate of cases is calculated by dividing the total number of cases by the mid-2022 estimate of the resident population of each local authority multiplied by 100,000.        
 8. Similar local authorities are identified using <a href="https://www.cipfastats.net/resources/nearestneighbours" target="_blank">CIPFA's Nearest Neighbours Model</a>.
