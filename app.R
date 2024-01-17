@@ -37,7 +37,13 @@ ui <- bootstrapPage(
           <a href="https://www.trafforddatalab.io" aria-label="Return to Trafford Data Lab home page"><img src="https://www.trafforddatalab.io/assets/logo/trafforddatalab_logo.svg" alt="Trafford Data Lab" width="93" class="traffordDataLabLogo"/></a>
           <h1>Local COVID-19</h1>
         </header>
-        <main>'),
+        <main>
+        <div style="width: 75%; margin: auto;">
+          <p class="contentBlock themeBlockLight smallText" style="margin-bottom: 1em;">
+            <span style="font-weight: bold;">PLEASE NOTE:</span> The final data update of the <a href="https://coronavirus.data.gov.uk/details/whats-new/record/3542bdd2-99a1-44dc-8dab-4e787b777085" target="_blank">Coronavirus (COVID-19) dashboard</a> supplying data to this app occurred on 14 December 2023. The dashboard has now been replaced by the <a href="https://ukhsa-dashboard.data.gov.uk/" target="_blank">UKHSA data dashboard</a> which presents the latest available data on respiratory viruses including COVID-19.
+          </p>
+        </div>
+       '),
   div(class = "centred",
       selectInput(inputId = "ltla",
                   label = "Local Authority:",

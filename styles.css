@@ -121,3 +121,21 @@ img
 {
     padding: 6px 0 6px 4px;
 }
+
+/* content block usually paired with themeBlockLight */
+.contentBlock
+{
+    padding: 1em;
+    border-left: 4px solid #757575;
+}
+
+.themeBlockLight
+{
+    background-color: #f5f9ff;
+}
+
+/* Used for reference text or clarification notes mostly */
+.smallText
+{
+    font-size: 0.8em;
+}
